@@ -24,6 +24,7 @@ export default function RoomPage() {
     const navigate = useNavigate();
     const [showShareModal, setShowShareModal] = useState(false);
     const [showJoinForm, setShowJoinForm] = useState(false);
+    const [showLeaveConfirm, setShowLeaveConfirm] = useState(false);
     const [joinName, setJoinName] = useState('');
     const [joinPassword, setJoinPassword] = useState('');
     const [joinError, setJoinError] = useState(null);
@@ -116,6 +117,15 @@ export default function RoomPage() {
     }, [opponentName]);
 
     const handleLeaveRoom = () => {
+        // If game is in progress, show confirmation
+        if (gameState.isStarted && !gameState.isEnded) {
+            setShowLeaveConfirm(true);
+        } else {
+            confirmLeave();
+        }
+    };
+
+    const confirmLeave = () => {
         leaveRoom();
         navigate('/');
     };
@@ -375,6 +385,17 @@ export default function RoomPage() {
                     pgn={gameState.pgn}
                     onRematch={requestRestart}
                     onLeave={handleLeaveRoom}
+                />
+            )}
+
+            {showLeaveConfirm && (
+                <ConfirmDialog
+                    title="Leave Game?"
+                    message="The game is still in progress. Are you sure you want to leave?"
+                    onConfirm={confirmLeave}
+                    onCancel={() => setShowLeaveConfirm(false)}
+                    confirmText="Leave"
+                    cancelText="Stay"
                 />
             )}
         </div>

@@ -1,7 +1,14 @@
 import { HelpCircle } from 'lucide-react';
 import './ConfirmDialog.css';
 
-export default function ConfirmDialog({ title, message, onConfirm, onCancel }) {
+export default function ConfirmDialog({
+    title,
+    message,
+    onConfirm,
+    onCancel,
+    confirmText = 'Accept',
+    cancelText = 'Decline'
+}) {
     return (
         <div className="modal-overlay">
             <div className="modal confirm-dialog">
@@ -10,10 +17,10 @@ export default function ConfirmDialog({ title, message, onConfirm, onCancel }) {
                 <p className="confirm-message">{message}</p>
                 <div className="confirm-actions">
                     <button className="btn btn-secondary" onClick={onCancel}>
-                        Decline
+                        {cancelText}
                     </button>
                     <button className="btn btn-success" onClick={onConfirm}>
-                        Accept
+                        {confirmText}
                     </button>
                 </div>
             </div>
