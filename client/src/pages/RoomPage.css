@@ -1,8 +1,10 @@
 .room-page {
     min-height: 100vh;
+    height: 100vh;
     display: flex;
     flex-direction: column;
     background: var(--color-bg-primary);
+    overflow: hidden;
 }
 
 .room-header {
@@ -12,6 +14,7 @@
     padding: var(--spacing-sm) var(--spacing-lg);
     margin: var(--spacing-sm) var(--spacing-sm) 0;
     border-radius: var(--radius-lg);
+    flex-shrink: 0;
 }
 
 .room-info {
@@ -73,39 +76,40 @@
     color: var(--color-text-secondary);
 }
 
-/* Main game container - board focused layout */
+/* Main game container - board takes full height */
 .game-container {
     flex: 1;
     display: flex;
     gap: var(--spacing-md);
     padding: var(--spacing-sm);
-    max-width: 1400px;
-    margin: 0 auto;
-    width: 100%;
+    min-height: 0;
+    overflow: hidden;
 }
 
-/* Board section - takes most space */
+/* Board section - full height */
 .board-section {
     flex: 1;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    gap: var(--spacing-sm);
+    gap: var(--spacing-xs);
     min-width: 0;
+    min-height: 0;
 }
 
 .player-bar {
     display: flex;
     align-items: center;
     gap: var(--spacing-sm);
-    padding: var(--spacing-sm) var(--spacing-md);
+    padding: var(--spacing-xs) var(--spacing-md);
     background: var(--glass-bg);
     backdrop-filter: var(--glass-blur);
     border: 1px solid var(--glass-border);
     border-radius: var(--radius-md);
     width: 100%;
-    max-width: 600px;
+    max-width: calc(100vh - 180px);
+    flex-shrink: 0;
 }
 
 .player-bar.player {
@@ -130,19 +134,22 @@
 
 .player-name {
     font-weight: 500;
-    font-size: 0.9375rem;
+    font-size: 0.875rem;
     color: var(--color-text-primary);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 /* Sidebar - fixed width */
 .sidebar {
-    width: 320px;
+    width: 300px;
     flex-shrink: 0;
     display: flex;
     flex-direction: column;
     gap: var(--spacing-sm);
-    max-height: calc(100vh - 80px);
-    overflow-y: auto;
+    min-height: 0;
+    overflow: hidden;
 }
 
 /* Share Modal */
@@ -201,25 +208,37 @@
 
 /* Responsive */
 @media (max-width: 1024px) {
+    .room-page {
+        height: auto;
+        min-height: 100vh;
+        overflow: auto;
+    }
+
     .game-container {
         flex-direction: column;
+        overflow: visible;
     }
 
     .board-section {
         order: 1;
+        min-height: auto;
     }
 
     .sidebar {
         order: 2;
         width: 100%;
-        max-height: none;
         flex-direction: row;
         flex-wrap: wrap;
+        overflow: visible;
     }
 
     .sidebar>* {
         flex: 1;
         min-width: 280px;
+    }
+
+    .player-bar {
+        max-width: 100%;
     }
 }
 

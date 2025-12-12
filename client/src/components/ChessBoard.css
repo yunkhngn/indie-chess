@@ -1,7 +1,9 @@
 .chess-board-wrapper {
     position: relative;
     width: 100%;
-    max-width: min(600px, calc(100vh - 200px));
+    height: 100%;
+    max-width: calc(100vh - 180px);
+    max-height: calc(100vh - 180px);
     aspect-ratio: 1;
 }
 
@@ -27,4 +29,11 @@
     gap: var(--spacing-md);
     color: white;
     font-size: 1rem;
+}
+
+@media (max-width: 1024px) {
+    .chess-board-wrapper {
+        max-width: min(500px, 90vw);
+        max-height: min(500px, 90vw);
+    }
 }
