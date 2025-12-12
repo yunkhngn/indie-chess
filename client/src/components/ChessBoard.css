@@ -53,8 +53,9 @@
 /* Mobile */
 @media (max-width: 640px) {
     .chess-board-wrapper {
-        max-width: min(100vw - 16px, 100vw);
-        max-height: min(100vw - 16px, 100vw);
+        max-width: calc(100vw - 32px);
+        max-height: calc(100vw - 32px);
+        margin: 0 auto;
     }
 
     .waiting-message {
