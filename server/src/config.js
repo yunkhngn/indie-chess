@@ -1,5 +1,5 @@
 export const config = {
-  port: process.env.PORT || 3001,
+  port: process.env.PORT || 3002,
   corsOrigin: process.env.CORS_ORIGIN || '*',
   pgnDirectory: process.env.PGN_DIR || './pgn',
   

@@ -15,7 +15,7 @@ COPY src ./src
 RUN mkdir -p /app/pgn
 
 # Expose port
-EXPOSE 3001
+EXPOSE 3002
 
 # Start server
 CMD ["npm", "start"]
