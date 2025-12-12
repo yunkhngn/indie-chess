@@ -30,6 +30,8 @@ export default function RoomPage() {
     const [joinError, setJoinError] = useState(null);
     const [needsPassword, setNeedsPassword] = useState(false);
     const [copied, setCopied] = useState(false);
+    // Tab state for Dashboard Layout
+    const [activeTab, setActiveTab] = useState('moves'); // Default to moves or chat
     const [theme, setTheme] = useState(() => {
         if (typeof window !== 'undefined') {
             return localStorage.getItem('theme') || 'dark';
@@ -257,67 +259,114 @@ export default function RoomPage() {
         );
     }
 
+
+
     return (
-        <div className="room-page">
-            <header className="room-header glass">
-                <div className="room-info">
-                    <button className="btn btn-ghost" onClick={handleLeaveRoom}>
-                        <ArrowLeft size={18} />
-                        Leave
-                    </button>
-                    <div className="room-code-display">
+        <div className="room-page dashboard-layout">
+            {/* Left Panel: Control Center */}
+            <aside className="dashboard-sidebar">
+                <div className="sidebar-header">
+                    <div className="room-info-compact">
                         <span className="room-label">Room</span>
-                        <span className="room-code">{roomCode}</span>
-                        <button className="btn btn-ghost btn-sm" onClick={handleCopyCode}>
-                            {copied ? <Check size={16} /> : <Copy size={16} />}
+                        <code className="room-code">{roomCode}</code>
+                        <button className="btn btn-ghost btn-xs" onClick={handleCopyCode} title="Copy Room Code">
+                            {copied ? <Check size={14} /> : <Copy size={14} />}
+                        </button>
+                        <div className="header-divider"></div>
+                        <button className="btn btn-ghost btn-xs text-error" onClick={handleLeaveRoom} title="Leave Room">
+                            <ArrowLeft size={14} />
+                            <span className="btn-text-xs">Leave</span>
+                        </button>
+                    </div>
+                    <div className="theme-toggle">
+                        <button className="btn btn-ghost btn-icon btn-sm" onClick={toggleTheme}>
+                            {theme === 'dark' ? <Sun size={16} /> : <Moon size={16} />}
                         </button>
                     </div>
                 </div>
 
-                <div className="header-right">
-                    <div className="connection-info">
-                        <span className={`status-indicator ${connected ? 'connected' : 'disconnected'}`} />
-                        <span className="status-text">
-                            {!connected ? 'Reconnecting...' :
-                                !opponentConnected ? 'Waiting for opponent...' :
-                                    opponentName}
-                        </span>
+                {/* Player Profiles */}
+                <div className="profiles-section">
+                    <div className="profile-row opponent">
+                        <div className="profile-info">
+                            <span className="role">Opponent</span>
+                            <div className="nametag-pill">
+                                <span className={`status-dot ${opponentConnected ? 'online' : 'offline'}`}></span>
+                                <span className="name">{opponentName || 'Waiting...'}</span>
+                            </div>
+                        </div>
+                        <span className={`color-indicator ${playerColor === 'white' ? 'black' : 'white'}`} title="Opponent Color" />
                     </div>
-                    <button className="btn btn-ghost btn-icon" onClick={toggleTheme}>
-                        {theme === 'dark' ? <Sun size={18} /> : <Moon size={18} />}
+
+                    <div className="profile-divider"></div>
+
+                    <div className="profile-row player">
+                        <div className="profile-info">
+                            <span className="role">You</span>
+                            <div className="nametag-pill">
+                                <span className="status-dot online"></span>
+                                <span className="name">Me</span>
+                            </div>
+                        </div>
+                        <span className={`color-indicator ${playerColor || 'white'}`} title="Your Color" />
+                    </div>
+                </div>
+
+                {/* Tabs Navigation */}
+                <div className="sidebar-tabs">
+                    <button
+                        className={`tab-btn ${activeTab === 'moves' ? 'active' : ''}`}
+                        onClick={() => setActiveTab('moves')}
+                    >
+                        Moves & Controls
+                    </button>
+                    <button
+                        className={`tab-btn ${activeTab === 'chat' ? 'active' : ''}`}
+                        onClick={() => setActiveTab('chat')}
+                    >
+                        Chat
                     </button>
                 </div>
-            </header>
 
-            <main className="game-container">
-                <div className="sidebar-left">
-                    <div className="card player-info-card desktop-only">
-                        <div className="player-info-row">
-                            <span className={`color-indicator ${playerColor === 'white' ? 'black' : 'white'}`} />
-                            <div className="player-details">
-                                <span className="player-role">Opponent</span>
-                                <span className="player-name">{opponentName || 'Waiting...'}</span>
+                {/* Tab Content Area */}
+                <div className="sidebar-content">
+                    {activeTab === 'chat' ? (
+                        <div className="tab-pane chat-pane">
+                            <ChatPanel
+                                messages={chat}
+                                onSend={sendChat}
+                                playerColor={playerColor}
+                            />
+                        </div>
+                    ) : (
+                        <div className="tab-pane moves-controls-pane">
+                            <div className="moves-scroll-area">
+                                <MoveList moves={gameState.moves} />
+                            </div>
+                            <div className="controls-area">
+                                <GameControls
+                                    onResign={resign}
+                                    onOfferDraw={offerDraw}
+                                    onRequestRestart={requestRestart}
+                                    onRequestColorSwap={() => requestColorSwap(playerColor === 'white' ? 'black' : 'white')}
+                                    isGameEnded={gameState.isEnded}
+                                    isGameStarted={gameState.isStarted}
+                                    hasOpponent={!!opponentName}
+                                    movesCount={gameState.moves.length}
+                                />
                             </div>
                         </div>
-                        <div className="player-info-divider"></div>
-                        <div className="player-info-row">
-                            <span className={`color-indicator ${playerColor || 'white'}`} />
-                            <div className="player-details">
-                                <span className="player-role">You</span>
-                                <span className="player-name">Me</span>
-                            </div>
-                        </div>
-                    </div>
-
-                    <MoveList moves={gameState.moves} />
+                    )}
                 </div>
+            </aside>
 
-                <div className="board-section">
-                    <div className="player-bar-container top mobile-only">
-                        <div className="player-bar opponent">
-                            <span className={`color-indicator ${playerColor === 'white' ? 'black' : 'white'}`} />
-                            <span className="player-name">{opponentName || 'Waiting...'}</span>
-                        </div>
+            {/* Right Panel: Game Board */}
+            <main className="dashboard-main">
+                <div className="board-centering-container">
+                    {/* Mobile Player Bar (Opponent) */}
+                    <div className="mobile-player-bar top mobile-only">
+                        <span className={`color-indicator ${playerColor === 'white' ? 'black' : 'white'}`} />
+                        <span className="name">{opponentName || 'Waiting...'}</span>
                     </div>
 
                     <ChessBoard
@@ -332,34 +381,14 @@ export default function RoomPage() {
                         opponentConnected={opponentConnected}
                     />
 
-                    <div className="player-bar-container bottom mobile-only">
-                        <div className="player-bar player">
-                            <span className={`color-indicator ${playerColor || 'white'}`} />
-                            <span className="player-name">You</span>
-                        </div>
+                    {/* Mobile Player Bar (Self) */}
+                    <div className="mobile-player-bar bottom mobile-only">
+                        <span className={`color-indicator ${playerColor || 'white'}`} />
+                        <span className="name">You</span>
                     </div>
                 </div>
-
-                <div className="sidebar-right">
-                    <ChatPanel
-                        messages={chat}
-                        onSend={sendChat}
-                        playerColor={playerColor}
-                    />
-
-                    <GameControls
-                        onResign={resign}
-                        onOfferDraw={offerDraw}
-                        onRequestRestart={requestRestart}
-                        onRequestColorSwap={() => requestColorSwap(playerColor === 'white' ? 'black' : 'white')}
-                        isGameEnded={gameState.isEnded}
-                        isGameStarted={gameState.isStarted}
-                        hasOpponent={!!opponentName}
-                        movesCount={gameState.moves.length}
-                    />
-                </div>
             </main>
-
+            {/* Modals & Overlays */}
             {showShareModal && (
                 <div className="modal-overlay" onClick={() => setShowShareModal(false)}>
                     <div className="modal share-modal" onClick={e => e.stopPropagation()}>

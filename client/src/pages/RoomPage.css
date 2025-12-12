@@ -7,353 +7,366 @@
     overflow: hidden;
 }
 
-/* Room Header */
-.room-header {
+/* Dashboard Layout Grid */
+.dashboard-layout {
+    display: grid;
+    grid-template-columns: 400px 1fr;
+    gap: var(--spacing-lg);
+    padding: var(--spacing-lg);
+    height: 100vh;
+    box-sizing: border-box;
+}
+
+/* Left Panel: Dashboard Sidebar */
+.dashboard-sidebar {
+    background: var(--glass-bg);
+    backdrop-filter: var(--glass-blur);
+    border: 1px solid var(--glass-border);
+    border-radius: var(--radius-xl);
+    display: flex;
+    flex-direction: column;
+    padding: var(--spacing-md);
+    gap: var(--spacing-md);
+    overflow: hidden;
+    height: 100%;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+}
+
+.sidebar-header {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: var(--spacing-sm);
-    /* Same padding as sidebars */
-    margin: 0;
-    /* Remove mismatched margin */
-    /* Removed border-radius as it spans full width basically */
+    padding-bottom: var(--spacing-sm);
+    border-bottom: 1px solid var(--color-border);
     flex-shrink: 0;
-    width: 100%;
-    /* Ensure full width */
-    max-width: 100%;
 }
 
-.room-info {
+.room-info-compact {
     display: flex;
     align-items: center;
-    gap: var(--spacing-md);
-}
-
-.room-code-display {
-    display: flex;
-    align-items: center;
-    gap: var(--spacing-xs);
+    gap: var(--spacing-sm);
 }
 
 .room-label {
     font-size: 0.75rem;
     text-transform: uppercase;
-    color: var(--color-text-muted);
+    color: var(--color-text-secondary);
     letter-spacing: 0.05em;
 }
 
 .room-code {
     font-family: var(--font-mono);
-    font-size: 0.875rem;
-    font-weight: 600;
+    font-size: 1rem;
+    font-weight: 700;
     color: var(--color-text-primary);
-    letter-spacing: 0.1em;
+    background: rgba(255, 255, 255, 0.1);
+    padding: 2px 6px;
+    border-radius: var(--radius-sm);
 }
 
-.header-right {
+.theme-toggle {
     display: flex;
-    align-items: center;
-    gap: var(--spacing-sm);
-}
-
-.connection-info {
-    display: flex;
-    align-items: center;
-    gap: var(--spacing-xs);
-}
-
-.status-indicator {
-    width: 8px;
-    height: 8px;
-    border-radius: 50%;
-}
-
-.status-indicator.connected {
-    background: var(--color-success);
-}
-
-.status-indicator.disconnected {
-    background: var(--color-warning);
-    animation: pulse 1s infinite;
-}
-
-.status-text {
-    font-size: 0.8rem;
-    color: var(--color-text-secondary);
-}
-
-/* Main game container */
-.game-container {
-    flex: 1;
-    display: flex;
-    gap: var(--spacing-md);
-    padding: var(--spacing-sm);
-    min-height: 0;
-    overflow: hidden;
-    position: relative;
-}
-
-/* Board section */
-.board-section {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
     align-items: center;
     justify-content: center;
-    gap: var(--spacing-lg);
-    /* Spacer */
-    min-width: 0;
-    min-height: 0;
-    /* Removed position: relative */
-    padding: var(--spacing-md) 0;
+    height: 32px;
+    /* Set fixed height matching other elements */
+    width: 32px;
 }
 
-.player-bar-container {
-    width: 100%;
-    max-width: calc(100vh - 180px);
-    /* Match board max width logic */
-    display: flex;
-    /* Removed absolute positioning */
-}
-
-.player-bar-container.top {
-    justify-content: flex-start;
-}
-
-.player-bar-container.bottom {
-    justify-content: flex-end;
-}
-
-.player-bar {
-    display: flex;
-    align-items: center;
-    gap: var(--spacing-md);
-    padding: var(--spacing-md) var(--spacing-lg);
-    background: var(--glass-bg);
-    backdrop-filter: var(--glass-blur);
-    border: 1px solid var(--glass-border);
+/* Player Profiles Card (Inside Sidebar) */
+.profiles-section {
+    background: rgba(255, 255, 255, 0.03);
     border-radius: var(--radius-lg);
-    flex-shrink: 0;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-}
-
-.player-bar.player {
-    border-color: var(--color-accent-light);
-    box-shadow: 0 4px 12px rgba(59, 130, 246, 0.15);
-}
-
-.color-indicator {
-    width: 16px;
-    height: 16px;
-    border-radius: var(--radius-sm);
-    border: 1px solid var(--color-border);
+    padding: var(--spacing-md);
+    display: flex;
+    flex-direction: column;
+    margin-bottom: var(--spacing-sm);
     flex-shrink: 0;
 }
 
-.color-indicator.white {
-    background: #f8fafc;
-}
-
-.color-indicator.black {
-    background: #1e1e2e;
-}
-
-.player-name {
-    font-weight: 600;
-    font-size: 1rem;
-    color: var(--color-text-primary);
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-}
-
-/* Sidebars */
-.sidebar-left,
-.sidebar-right {
-    width: 350px;
-    /* Increased width as requested */
-    flex-shrink: 0;
-    display: flex;
-    flex-direction: column;
-    gap: var(--spacing-sm);
-    min-height: 0;
-    overflow: hidden;
-    padding: var(--spacing-sm);
-    height: 100%;
-}
-
-/* Specific Sidebar Adjustments */
-.sidebar-left .card {
-    flex: 1;
-    /* Move list takes full height */
-    display: flex;
-    flex-direction: column;
-    height: 100%;
-    min-height: 0;
-}
-
-.sidebar-left .move-list-content {
-    flex: 1;
-    overflow-y: auto;
-}
-
-/* Chat & Controls Container in Right Sidebar */
-.sidebar-right {
-    gap: var(--spacing-xs);
-    /* Tighter spacing */
-}
-
-.sidebar-right .chat-panel {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    height: 100%;
-}
-
-/* Ensure the card wrapper also grows */
-.sidebar-right .card:has(.chat-panel) {
-    flex: 1;
-    /* Chat takes all remaining space */
-    display: flex;
-    flex-direction: column;
-    min-height: 0;
-    margin-bottom: 0;
-    /* Snap to controls */
-}
-
-/* Ensure controls stay at bottom and don't shrink */
-.sidebar-right .game-controls {
-    flex-shrink: 0;
-    margin-top: 0;
-    /* Removing auto margin, relying on flex-grow of chat */
-}
-
-.sidebar-right .chat-messages {
-    flex: 1;
-    overflow-y: auto;
-}
-
-/* Move List (No longer absolute) */
-.move-list-container {
-    display: none;
-    /* Removed/Refactored */
-}
-
-/* Share Modal */
-.share-modal {
-    max-width: 360px;
-}
-
-.share-info {
-    color: var(--color-text-secondary);
-    margin-bottom: var(--spacing-md);
-}
-
-.share-code-box {
+.profile-row {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: var(--spacing-sm);
-    border-radius: var(--radius-md);
-}
-
-.share-code {
-    font-family: var(--font-mono);
-    font-size: 1.25rem;
-    font-weight: 600;
-    color: var(--color-text-primary);
-    letter-spacing: 0.15em;
-}
-
-.share-divider {
-    display: flex;
-    align-items: center;
-    gap: var(--spacing-md);
-    margin: var(--spacing-md) 0;
-    color: var(--color-text-muted);
-    font-size: 0.875rem;
-}
-
-.share-divider::before,
-.share-divider::after {
-    content: '';
-    flex: 1;
-    height: 1px;
-    background: var(--color-border);
-}
-
-.share-hint {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: var(--spacing-sm);
-    text-align: center;
-    color: var(--color-text-muted);
-    font-size: 0.8rem;
-    margin-top: var(--spacing-md);
-}
-
-/* Responsive Utility Classes */
-.mobile-only {
-    display: none !important;
-}
-
-@media (max-width: 1024px) {
-    .mobile-only {
-        display: flex !important;
-    }
-
-    .desktop-only {
-        display: none !important;
-    }
-}
-
-/* Player Info Card in Sidebar */
-.player-info-card {
-    display: flex;
-    flex-direction: column;
-    padding: var(--spacing-md);
-    gap: var(--spacing-sm);
-    flex: 0 0 auto;
-    /* Don't grow, don't shrink */
-}
-
-.player-info-row {
-    display: flex;
-    align-items: center;
+    /* Space between Info and Color Indicator */
     gap: var(--spacing-md);
 }
 
-.player-info-divider {
-    height: 1px;
-    background: var(--color-border);
-    margin: var(--spacing-xs) 0;
-}
-
-.player-details {
+.profile-info {
     display: flex;
     flex-direction: column;
+    gap: 4px;
 }
 
-.player-role {
-    font-size: 0.75rem;
+.nametag-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: rgba(20, 20, 30, 0.6);
+    /* Dark background like reference */
+    padding: 6px 16px;
+    border-radius: 999px;
+    /* Pill shape */
+    border: 1px solid var(--color-border);
+}
+
+.status-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background-color: var(--color-text-muted);
+    /* Default offline/gray */
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.2);
+}
+
+.status-dot.online {
+    background-color: #10b981;
+    /* Green color match */
+    box-shadow: 0 0 8px rgba(16, 185, 129, 0.4);
+}
+
+.status-dot.offline {
+    background-color: var(--color-text-muted);
+}
+
+.profile-info .role {
+    font-size: 0.7rem;
     color: var(--color-text-secondary);
     text-transform: uppercase;
     letter-spacing: 0.05em;
+    margin-left: 4px;
 }
 
-/* Adjust board section on desktop to remove gaps when player bars are hidden */
-.board-section {
+.profile-info .name {
+    font-weight: 500;
+    color: var(--color-text-primary);
+    font-size: 0.95rem;
+}
+
+.profile-divider {
+    height: 1px;
+    background: var(--color-border);
+    opacity: 0.5;
+}
+
+/* Tab Navigation */
+.sidebar-tabs {
+    display: flex;
+    gap: var(--spacing-xs);
+    background: rgba(0, 0, 0, 0.2);
+    padding: 4px;
+    border-radius: var(--radius-lg);
+    flex-shrink: 0;
+}
+
+.tab-btn {
+    flex: 1;
+    padding: var(--spacing-sm);
+    border: none;
+    background: transparent;
+    color: var(--color-text-secondary);
+    font-weight: 600;
+    font-size: 0.9rem;
+    border-radius: var(--radius-md);
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.tab-btn:hover {
+    color: var(--color-text-primary);
+    background: rgba(255, 255, 255, 0.05);
+}
+
+.tab-btn.active {
+    background: var(--color-accent);
+    color: white;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+/* Sidebar Content Area (Moves/Chat) */
+.sidebar-content {
+    flex: 1;
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+    background: rgba(0, 0, 0, 0.1);
+    /* Subtle recess */
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    position: relative;
+    border: 1px solid var(--color-border);
+}
+
+.tab-pane {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    overflow: hidden;
+}
+
+/* Adjustments for components inside tabs */
+.tab-pane .chat-panel,
+.tab-pane .move-list {
+    background: transparent;
+    box-shadow: none;
+    border: none;
+    height: 100%;
+}
+
+.tab-pane .chat-messages,
+.tab-pane .move-list-content {
+    padding: var(--spacing-sm);
+}
+
+/* Sidebar Header Actions */
+.header-divider {
+    width: 1px;
+    height: 16px;
+    background: var(--color-border);
+    margin: 0 var(--spacing-xs);
+}
+
+.text-error {
+    color: var(--color-error);
+}
+
+.text-error:hover {
+    background: rgba(239, 68, 68, 0.1);
+}
+
+.btn-text-xs {
+    font-size: 0.75rem;
+    font-weight: 600;
+    margin-left: 4px;
+}
+
+/* Moves Tab Layout (Split View: List + Controls) */
+.moves-controls-pane {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+.moves-scroll-area {
+    flex: 1;
+    /* Takes available space */
+    overflow-y: auto;
+    min-height: 0;
+    border-bottom: 1px solid var(--color-border);
+}
+
+.controls-area {
+    flex-shrink: 0;
+    padding: var(--spacing-sm);
+    background: rgba(0, 0, 0, 0.2);
+    /* Slightly darker/distinct bg */
+}
+
+/* Override existing GameControls styles for this context */
+.controls-area .card {
+    background: transparent;
+    border: none;
+    box-shadow: none;
     padding: 0;
-    gap: 0;
 }
 
-/* Tablet Responsive Override */
+/* Chat Pane */
+.chat-pane {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Right Panel: Game Main Area */
+.dashboard-main {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    /* Optional: glass effect or just transparent to show bg */
+    border-radius: var(--radius-xl);
+    position: relative;
+}
+
+.board-centering-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--spacing-lg);
+    width: 100%;
+    max-width: 100%;
+}
+
+/* Mobile responsive adjustments */
+.mobile-only {
+    display: none;
+}
+
+.mobile-player-bar {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+    background: var(--glass-bg);
+    padding: var(--spacing-xs) var(--spacing-md);
+    border-radius: var(--radius-full);
+    border: 1px solid var(--glass-border);
+}
+
+/* Responsive Breakpoints */
 @media (max-width: 1024px) {
-    .board-section {
-        gap: var(--spacing-lg);
+    .dashboard-layout {
+        display: flex;
+        flex-direction: column-reverse;
+        /* Controls at bottom on mobile? Or Top? stack vertically */
+        padding: var(--spacing-sm);
+        gap: var(--spacing-md);
+        height: auto;
+        min-height: 100vh;
+        overflow-y: auto;
+    }
+
+    .dashboard-sidebar {
+        height: 600px;
+        /* Fixed height for interaction area on tablet */
+        flex-shrink: 0;
+    }
+
+    .dashboard-main {
+        flex: 0 0 auto;
         padding: var(--spacing-md) 0;
     }
+}
+
+@media (max-width: 640px) {
+    .dashboard-layout {
+        display: block;
+        /* Normal flow */
+        padding: var(--spacing-xs);
+    }
+
+    /* On mobile, show Board FIRST, then Controls below */
+    .dashboard-main {
+        margin-bottom: var(--spacing-md);
+        min-height: auto;
+    }
+
+    .dashboard-sidebar {
+        height: auto;
+        min-height: 0;
+        border-radius: var(--radius-lg);
+    }
+
+    .sidebar-content {
+        height: 400px;
+        /* Limit chat/moves height on mobile */
+    }
+
+    .mobile-only {
+        display: flex;
+    }
+
+    /* Hide desktop profile section in sidebar on mobile since we have bars? 
+       Actually, keep it for detail, but maybe styled differently. */
 }
 
 /* Mobile Responsive */
@@ -478,4 +491,92 @@
 
 .form-actions .btn {
     flex: 1;
+}
+
+/* Share Modal (Refined) */
+.share-modal {
+    width: 100%;
+    max-width: 420px;
+}
+
+.share-info {
+    color: var(--color-text-secondary);
+    margin-bottom: var(--spacing-lg);
+    line-height: 1.5;
+}
+
+.share-code-box {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: rgba(0, 0, 0, 0.3);
+    padding: var(--spacing-sm);
+    border-radius: var(--radius-lg);
+    border: 1px solid var(--color-border);
+    margin-bottom: var(--spacing-md);
+}
+
+.share-code {
+    font-family: var(--font-mono);
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: #ffffff;
+    /* Explicit white for maximum contrast */
+    letter-spacing: 0.1em;
+    padding-left: var(--spacing-xs);
+    text-shadow: 0 0 10px rgba(255, 255, 255, 0.3);
+    /* Add subtle glow */
+}
+
+/* Share Divider */
+.share-divider {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-md);
+    margin: var(--spacing-lg) 0;
+    color: var(--color-text-muted);
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+}
+
+.share-divider span {
+    opacity: 0.7;
+}
+
+.share-divider::before,
+.share-divider::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--color-border);
+    opacity: 0.3;
+}
+
+.share-hint {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--spacing-sm);
+    color: var(--color-text-secondary);
+    font-size: 0.875rem;
+    margin-top: var(--spacing-xl);
+    padding-top: var(--spacing-md);
+    border-top: 1px solid var(--color-border);
+    /* Subtle separation */
+}
+
+.spinner {
+    animation: spin 2s linear infinite;
+    color: var(--color-accent);
+}
+
+@keyframes spin {
+    from {
+        transform: rotate(0deg);
+    }
+
+    to {
+        transform: rotate(360deg);
+    }
 }
