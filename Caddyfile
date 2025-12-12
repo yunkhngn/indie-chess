@@ -1,27 +1,13 @@
 # Indie Chess - Caddyfile
-# Replace chess.yourdomain.com with your actual domain
 
-# Main chess application
-chess.yunkhgn.dev {
-    # Frontend - serve static files
-    handle {
-        reverse_proxy frontend:80
-    }
-
+chess.yunkhngn.dev {
     # Backend API and WebSocket
     handle /socket.io/* {
         reverse_proxy backend:3002 {
-            # WebSocket support
             header_up Host {host}
             header_up X-Real-IP {remote_host}
             header_up X-Forwarded-For {remote_host}
             header_up X-Forwarded-Proto {scheme}
-            
-            # WebSocket transport
-            transport http {
-                keepalive 30s
-                keepalive_idle_conns 10
-            }
         }
     }
 
@@ -30,19 +16,16 @@ chess.yunkhgn.dev {
         reverse_proxy backend:3002
     }
 
+    # Frontend - serve static files
+    handle {
+        reverse_proxy frontend:80
+    }
+
     # Enable compression
     encode gzip zstd
 
     # Logging
     log {
-        output file /var/log/caddy/chess.log {
-            roll_size 10mb
-            roll_keep 5
-        }
+        output stdout
     }
 }
-
-# Example: If you have other sites on the same VPS
-# other-site.yourdomain.com {
-#     reverse_proxy other-service:port
-# }

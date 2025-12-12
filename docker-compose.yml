@@ -19,7 +19,7 @@ services:
     environment:
       - NODE_ENV=production
       - PORT=3002
-      - CORS_ORIGIN=https://chess.yunkhgn.dev
+      - CORS_ORIGIN=https://chess.yunkhngn.dev
     volumes:
       - ./pgn-data:/app/pgn
     networks:
