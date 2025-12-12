@@ -81,19 +81,10 @@ class GameManager {
       // Add increment
       game.clocks[turn] += game.timeControl.increment;
       
-      // Check for time out
+      // Check for time out (DISABLED for infinite play)
       if (game.clocks[turn] <= 0) {
         game.clocks[turn] = 0;
-        game.isEnded = true;
-        game.result = {
-          winner: turn === 'white' ? 'black' : 'white',
-          reason: 'timeout'
-        };
-        return {
-          error: 'Time out',
-          gameOver: true,
-          result: game.result
-        };
+        // Infinite play: do not end game on timeout
       }
     }
 

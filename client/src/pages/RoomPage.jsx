@@ -318,9 +318,11 @@ export default function RoomPage() {
                     </div>
                 </div>
 
-                <div className="sidebar">
+                <div className="move-list-container">
                     <MoveList moves={gameState.moves} />
+                </div>
 
+                <div className="sidebar">
                     <ChatPanel
                         messages={chat}
                         onSend={sendChat}
