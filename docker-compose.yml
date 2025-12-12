@@ -5,8 +5,8 @@ services:
       dockerfile: Dockerfile
     container_name: indie-chess-frontend
     restart: unless-stopped
-    networks:
-      - chess-network
+    ports:
+      - "3080:80"
     depends_on:
       - backend
 
@@ -16,39 +16,11 @@ services:
       dockerfile: Dockerfile
     container_name: indie-chess-backend
     restart: unless-stopped
+    ports:
+      - "3002:3002"
     environment:
       - NODE_ENV=production
       - PORT=3002
       - CORS_ORIGIN=https://chess.yunkhngn.dev
     volumes:
       - ./pgn-data:/app/pgn
-    networks:
-      - chess-network
-
-  caddy:
-    image: caddy:2-alpine
-    container_name: indie-chess-caddy
-    restart: unless-stopped
-    ports:
-      - "80:80"
-      - "443:443"
-    volumes:
-      - ./Caddyfile:/etc/caddy/Caddyfile:ro
-      - caddy_data:/data
-      - caddy_config:/config
-    dns:
-      - 8.8.8.8
-      - 1.1.1.1
-    networks:
-      - chess-network
-    depends_on:
-      - frontend
-      - backend
-
-networks:
-  chess-network:
-    driver: bridge
-
-volumes:
-  caddy_data:
-  caddy_config:
