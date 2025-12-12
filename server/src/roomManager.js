@@ -332,8 +332,6 @@ class RoomManager {
       
       // Only show rooms with at least 1 player and available slots
       if (playerCount > 0 && hasSlot) {
-        const game = gameManager.getGame(roomCode);
-        
         rooms.push({
           code: roomCode,
           name: room.name,
@@ -341,7 +339,6 @@ class RoomManager {
           playerCount,
           maxPlayers: 2,
           createdAt: room.createdAt,
-          isGameStarted: game?.isStarted || false,
           creatorName: room.players.white?.name || room.players.black?.name || 'Unknown'
         });
       }
