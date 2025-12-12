@@ -291,11 +291,29 @@ export default function RoomPage() {
 
             <main className="game-container">
                 <div className="sidebar-left">
+                    <div className="card player-info-card desktop-only">
+                        <div className="player-info-row">
+                            <span className={`color-indicator ${playerColor === 'white' ? 'black' : 'white'}`} />
+                            <div className="player-details">
+                                <span className="player-role">Opponent</span>
+                                <span className="player-name">{opponentName || 'Waiting...'}</span>
+                            </div>
+                        </div>
+                        <div className="player-info-divider"></div>
+                        <div className="player-info-row">
+                            <span className={`color-indicator ${playerColor || 'white'}`} />
+                            <div className="player-details">
+                                <span className="player-role">You</span>
+                                <span className="player-name">Me</span>
+                            </div>
+                        </div>
+                    </div>
+
                     <MoveList moves={gameState.moves} />
                 </div>
 
                 <div className="board-section">
-                    <div className="player-bar-container top">
+                    <div className="player-bar-container top mobile-only">
                         <div className="player-bar opponent">
                             <span className={`color-indicator ${playerColor === 'white' ? 'black' : 'white'}`} />
                             <span className="player-name">{opponentName || 'Waiting...'}</span>
@@ -314,7 +332,7 @@ export default function RoomPage() {
                         opponentConnected={opponentConnected}
                     />
 
-                    <div className="player-bar-container bottom">
+                    <div className="player-bar-container bottom mobile-only">
                         <div className="player-bar player">
                             <span className={`color-indicator ${playerColor || 'white'}`} />
                             <span className="player-name">You</span>
