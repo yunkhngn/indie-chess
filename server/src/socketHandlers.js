@@ -263,10 +263,10 @@ export function setupSocketHandlers(io) {
       const { roomCode, playerId, color } = playerInfo;
       const room = roomManager.getRoom(roomCode);
 
-      // Can only request if game hasn't started or just ended
+      // Can only request if no moves have been made yet or game ended
       const game = gameManager.getGame(roomCode);
-      if (game && game.isStarted && !game.isEnded) {
-        socket.emit('error', { message: 'Cannot change colors during game' });
+      if (game && game.moves.length > 0 && !game.isEnded) {
+        socket.emit('error', { message: 'Cannot change colors after game starts' });
         return;
       }
 
