@@ -9,7 +9,8 @@ export default function GameControls({
     onRequestColorSwap,
     isGameEnded,
     isGameStarted,
-    hasOpponent
+    hasOpponent,
+    movesCount = 0
 }) {
     const [showConfirmResign, setShowConfirmResign] = useState(false);
 
@@ -23,6 +24,9 @@ export default function GameControls({
         }
     };
 
+    // Can swap colors only if no moves have been made yet
+    const canSwapColors = hasOpponent && (movesCount === 0 || isGameEnded);
+
     return (
         <div className="game-controls card">
             <div className="card-header">
@@ -30,7 +34,7 @@ export default function GameControls({
             </div>
 
             <div className="controls-grid">
-                {!isGameEnded && isGameStarted && (
+                {!isGameEnded && isGameStarted && movesCount > 0 && (
                     <>
                         <button
                             className={`control-btn ${showConfirmResign ? 'confirm' : ''}`}
@@ -66,8 +70,8 @@ export default function GameControls({
                 <button
                     className="control-btn"
                     onClick={onRequestColorSwap}
-                    disabled={!hasOpponent || (isGameStarted && !isGameEnded)}
-                    title={isGameStarted && !isGameEnded ? 'Cannot swap colors during game' : ''}
+                    disabled={!canSwapColors}
+                    title={!canSwapColors ? 'Cannot swap colors after game starts' : 'Request to swap colors'}
                 >
                     <ArrowLeftRight size={20} />
                     <span>Swap Colors</span>

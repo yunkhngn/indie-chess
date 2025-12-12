@@ -209,6 +209,7 @@ export default function RoomPage() {
                         isGameEnded={gameState.isEnded}
                         isGameStarted={gameState.isStarted}
                         hasOpponent={!!opponentName}
+                        movesCount={gameState.moves.length}
                     />
                 </div>
             </main>
