@@ -14,6 +14,6 @@ export const config = {
   maxRoomsPerIP: 5,
   roomExpiryTime: 24 * 60 * 60 * 1000, // 24 hours
   
-  // Reconnection window
-  reconnectWindow: 5 * 60 * 1000 // 5 minutes
+  // Reconnection window (time before slot can be taken over)
+  reconnectWindow: 1 * 60 * 1000 // 1 minute
 };

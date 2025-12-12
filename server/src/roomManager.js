@@ -79,13 +79,57 @@ class RoomManager {
       }
     }
 
-    // Check if room is full
-    if (room.players.white && room.players.black) {
-      return { error: 'Room is full' };
+    // Find empty slot (player disconnected or never joined)
+    let joinerColor = null;
+    
+    if (!room.players.white || !room.players.white.connected) {
+      // Check if this slot was abandoned (disconnected for too long)
+      if (room.players.white && !room.players.white.connected) {
+        const playerId = room.players.white.id;
+        const disconnectInfo = this.disconnectedPlayers.get(playerId);
+        if (disconnectInfo) {
+          const elapsed = Date.now() - disconnectInfo.disconnectTime;
+          if (elapsed > config.reconnectWindow) {
+            // Slot is abandoned, allow takeover
+            this.playerRooms.delete(playerId);
+            this.disconnectedPlayers.delete(playerId);
+            room.players.white = null;
+          }
+        }
+      }
+      if (!room.players.white) {
+        joinerColor = 'white';
+      }
+    }
+    
+    if (!joinerColor && (!room.players.black || !room.players.black.connected)) {
+      if (room.players.black && !room.players.black.connected) {
+        const playerId = room.players.black.id;
+        const disconnectInfo = this.disconnectedPlayers.get(playerId);
+        if (disconnectInfo) {
+          const elapsed = Date.now() - disconnectInfo.disconnectTime;
+          if (elapsed > config.reconnectWindow) {
+            this.playerRooms.delete(playerId);
+            this.disconnectedPlayers.delete(playerId);
+            room.players.black = null;
+          }
+        }
+      }
+      if (!room.players.black) {
+        joinerColor = 'black';
+      }
+    }
+
+    // Check if both slots are taken and connected
+    if (!joinerColor) {
+      if (room.players.white?.connected && room.players.black?.connected) {
+        return { error: 'Room is full' };
+      }
+      // One player is disconnected but still within reconnect window
+      return { error: 'Waiting for player to reconnect. Try again in a minute.' };
     }
 
     const playerId = uuidv4();
-    const joinerColor = room.players.white ? 'black' : 'white';
 
     room.players[joinerColor] = {
       id: playerId,
@@ -96,11 +140,14 @@ class RoomManager {
 
     this.playerRooms.set(playerId, roomCode);
 
+    const opponentColor = joinerColor === 'white' ? 'black' : 'white';
+    
     return {
       roomCode,
       playerId,
       color: joinerColor,
-      opponentName: room.players[joinerColor === 'white' ? 'black' : 'white']?.name
+      opponentName: room.players[opponentColor]?.name,
+      isOngoingGame: room.players[opponentColor]?.connected === true
     };
   }
 
