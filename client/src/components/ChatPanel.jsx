@@ -1,11 +1,11 @@
 import { useState, useEffect, useRef } from 'react';
+import { Send } from 'lucide-react';
 import './ChatPanel.css';
 
 export default function ChatPanel({ messages, onSend, playerColor }) {
     const [input, setInput] = useState('');
     const messagesRef = useRef(null);
 
-    // Auto-scroll to bottom
     useEffect(() => {
         if (messagesRef.current) {
             messagesRef.current.scrollTop = messagesRef.current.scrollHeight;
@@ -43,7 +43,7 @@ export default function ChatPanel({ messages, onSend, playerColor }) {
                             className={`message ${msg.color === playerColor ? 'own' : 'other'}`}
                         >
                             <div className="message-header">
-                                <span className={`message-author ${msg.color}`}>{msg.from}</span>
+                                <span className="message-author">{msg.from}</span>
                                 <span className="message-time">{formatTime(msg.timestamp)}</span>
                             </div>
                             <div className="message-text">{msg.text}</div>
@@ -62,7 +62,7 @@ export default function ChatPanel({ messages, onSend, playerColor }) {
                     maxLength={200}
                 />
                 <button type="submit" className="btn btn-primary btn-icon" disabled={!input.trim()}>
-                    ➤
+                    <Send size={16} />
                 </button>
             </form>
         </div>

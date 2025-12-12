@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { Trophy, Frown, Handshake, Copy, Download, RotateCcw, LogOut, Check } from 'lucide-react';
 import './GameOverModal.css';
 
 export default function GameOverModal({ result, playerColor, pgn, onRematch, onLeave }) {
@@ -55,13 +56,13 @@ export default function GameOverModal({ result, playerColor, pgn, onRematch, onL
         URL.revokeObjectURL(url);
     };
 
+    const ResultIcon = isDraw ? Handshake : isWinner ? Trophy : Frown;
+
     return (
         <div className="modal-overlay">
             <div className="modal game-over-modal">
                 <div className={`result-badge ${isDraw ? 'draw' : isWinner ? 'win' : 'lose'}`}>
-                    <span className="result-icon">
-                        {isDraw ? '🤝' : isWinner ? '🏆' : '😔'}
-                    </span>
+                    <ResultIcon size={48} className="result-icon" />
                     <h2 className="result-text">{getResultText()}</h2>
                     <p className="result-reason">{getReasonText()}</p>
                 </div>
@@ -73,20 +74,24 @@ export default function GameOverModal({ result, playerColor, pgn, onRematch, onL
                     </div>
                     <div className="pgn-actions">
                         <button className="btn btn-secondary btn-sm" onClick={handleCopyPGN}>
-                            {copied ? '✓ Copied' : '📋 Copy'}
+                            {copied ? <Check size={14} /> : <Copy size={14} />}
+                            {copied ? 'Copied' : 'Copy'}
                         </button>
                         <button className="btn btn-secondary btn-sm" onClick={handleDownloadPGN}>
-                            📥 Download
+                            <Download size={14} />
+                            Download
                         </button>
                     </div>
                 </div>
 
                 <div className="game-over-actions">
                     <button className="btn btn-secondary" onClick={onLeave}>
-                        Leave Room
+                        <LogOut size={16} />
+                        Leave
                     </button>
                     <button className="btn btn-primary" onClick={onRematch}>
-                        🔄 Rematch
+                        <RotateCcw size={16} />
+                        Rematch
                     </button>
                 </div>
             </div>

@@ -2,7 +2,7 @@
     min-height: 100vh;
     display: flex;
     flex-direction: column;
-    background: var(--color-bg-dark);
+    background: var(--color-bg-primary);
 }
 
 .room-header {
@@ -10,8 +10,8 @@
     align-items: center;
     justify-content: space-between;
     padding: var(--spacing-md) var(--spacing-lg);
-    background: var(--color-bg-card);
-    border-bottom: 1px solid var(--color-border);
+    margin: var(--spacing-md);
+    border-radius: var(--radius-lg);
 }
 
 .room-info {
@@ -37,7 +37,7 @@
     font-family: var(--font-mono);
     font-size: 1.125rem;
     font-weight: 600;
-    color: var(--color-primary-light);
+    color: var(--color-text-primary);
     letter-spacing: 0.1em;
 }
 
@@ -48,14 +48,13 @@
 }
 
 .status-indicator {
-    width: 10px;
-    height: 10px;
+    width: 8px;
+    height: 8px;
     border-radius: 50%;
 }
 
 .status-indicator.connected {
     background: var(--color-success);
-    box-shadow: 0 0 8px var(--color-success);
 }
 
 .status-indicator.disconnected {
@@ -73,7 +72,7 @@
     display: grid;
     grid-template-columns: 280px 1fr 320px;
     gap: var(--spacing-lg);
-    padding: var(--spacing-lg);
+    padding: 0 var(--spacing-lg) var(--spacing-lg);
     max-width: 1600px;
     margin: 0 auto;
     width: 100%;
@@ -100,6 +99,38 @@
     padding: var(--spacing-md);
 }
 
+.player-info {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+    padding: var(--spacing-md) var(--spacing-lg);
+    border-radius: var(--radius-lg);
+}
+
+.player-info.player {
+    border: 1px solid var(--color-accent-light);
+}
+
+.color-indicator {
+    width: 16px;
+    height: 16px;
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--color-border);
+}
+
+.color-indicator.white {
+    background: #f8fafc;
+}
+
+.color-indicator.black {
+    background: #1e1e2e;
+}
+
+.player-name {
+    font-weight: 500;
+    color: var(--color-text-primary);
+}
+
 /* Share Modal */
 .share-modal {
     max-width: 400px;
@@ -115,8 +146,6 @@
     align-items: center;
     justify-content: space-between;
     padding: var(--spacing-md);
-    background: var(--color-bg-input);
-    border: 1px solid var(--color-border);
     border-radius: var(--radius-md);
 }
 
@@ -124,7 +153,7 @@
     font-family: var(--font-mono);
     font-size: 1.5rem;
     font-weight: 600;
-    color: var(--color-primary-light);
+    color: var(--color-text-primary);
     letter-spacing: 0.15em;
 }
 
@@ -146,11 +175,14 @@
 }
 
 .share-hint {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--spacing-sm);
     text-align: center;
     color: var(--color-text-muted);
     font-size: 0.875rem;
     margin-top: var(--spacing-lg);
-    animation: pulse 2s infinite;
 }
 
 /* Responsive */

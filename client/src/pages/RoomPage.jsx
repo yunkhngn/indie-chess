@@ -1,10 +1,18 @@
 import { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
+import {
+    ArrowLeft,
+    Copy,
+    Check,
+    Link2,
+    Sun,
+    Moon,
+    Loader2
+} from 'lucide-react';
 import { useChessSocket } from '../hooks/useChessSocket';
 import ChessBoard from '../components/ChessBoard';
 import MoveList from '../components/MoveList';
 import ChatPanel from '../components/ChatPanel';
-import GameClock from '../components/GameClock';
 import GameControls from '../components/GameControls';
 import ConfirmDialog from '../components/ConfirmDialog';
 import GameOverModal from '../components/GameOverModal';
@@ -15,6 +23,12 @@ export default function RoomPage() {
     const navigate = useNavigate();
     const [showShareModal, setShowShareModal] = useState(false);
     const [copied, setCopied] = useState(false);
+    const [theme, setTheme] = useState(() => {
+        if (typeof window !== 'undefined') {
+            return localStorage.getItem('theme') || 'system';
+        }
+        return 'system';
+    });
 
     const {
         connected,
@@ -22,7 +36,6 @@ export default function RoomPage() {
         opponentName,
         opponentConnected,
         gameState,
-        clocks,
         chat,
         pendingRequest,
         makeMove,
@@ -40,14 +53,21 @@ export default function RoomPage() {
         leaveRoom
     } = useChessSocket();
 
-    // Show share modal if room just created and no opponent
+    useEffect(() => {
+        if (theme === 'system') {
+            document.documentElement.removeAttribute('data-theme');
+        } else {
+            document.documentElement.setAttribute('data-theme', theme);
+        }
+        localStorage.setItem('theme', theme);
+    }, [theme]);
+
     useEffect(() => {
         if (roomCode && !opponentName && playerColor) {
             setShowShareModal(true);
         }
     }, [roomCode, opponentName, playerColor]);
 
-    // Hide share modal when opponent joins
     useEffect(() => {
         if (opponentName) {
             setShowShareModal(false);
@@ -78,6 +98,10 @@ export default function RoomPage() {
         } catch (err) {
             console.error('Failed to copy:', err);
         }
+    };
+
+    const toggleTheme = () => {
+        setTheme(prev => prev === 'dark' ? 'light' : 'dark');
     };
 
     const getConfirmDialogProps = () => {
@@ -114,16 +138,21 @@ export default function RoomPage() {
 
     return (
         <div className="room-page">
-            <header className="room-header">
+            <button className="theme-toggle btn btn-ghost btn-icon" onClick={toggleTheme}>
+                {theme === 'dark' ? <Sun size={20} /> : <Moon size={20} />}
+            </button>
+
+            <header className="room-header glass">
                 <div className="room-info">
                     <button className="btn btn-ghost" onClick={handleLeaveRoom}>
-                        ← Leave
+                        <ArrowLeft size={18} />
+                        Leave
                     </button>
                     <div className="room-code-display">
                         <span className="room-label">Room</span>
                         <span className="room-code">{roomCode}</span>
                         <button className="btn btn-ghost btn-sm" onClick={handleCopyCode}>
-                            {copied ? '✓' : '📋'}
+                            {copied ? <Check size={16} /> : <Copy size={16} />}
                         </button>
                     </div>
                 </div>
@@ -140,24 +169,17 @@ export default function RoomPage() {
 
             <main className="game-container">
                 <div className="game-sidebar left-sidebar">
-                    <GameClock
-                        time={clocks[playerColor === 'white' ? 'black' : 'white']}
-                        color={playerColor === 'white' ? 'black' : 'white'}
-                        isActive={gameState.isStarted && !gameState.isEnded &&
-                            gameState.turn !== playerColor}
-                        playerName={opponentName || 'Opponent'}
-                    />
+                    <div className="player-info glass opponent">
+                        <span className={`color-indicator ${playerColor === 'white' ? 'black' : 'white'}`} />
+                        <span className="player-name">{opponentName || 'Waiting...'}</span>
+                    </div>
 
                     <MoveList moves={gameState.moves} />
 
-                    <GameClock
-                        time={clocks[playerColor || 'white']}
-                        color={playerColor || 'white'}
-                        isActive={gameState.isStarted && !gameState.isEnded &&
-                            gameState.turn === playerColor}
-                        playerName="You"
-                        isPlayer
-                    />
+                    <div className="player-info glass player">
+                        <span className={`color-indicator ${playerColor || 'white'}`} />
+                        <span className="player-name">You</span>
+                    </div>
                 </div>
 
                 <div className="board-container">
@@ -192,21 +214,23 @@ export default function RoomPage() {
                 </div>
             </main>
 
-            {/* Share Modal */}
             {showShareModal && (
                 <div className="modal-overlay" onClick={() => setShowShareModal(false)}>
                     <div className="modal share-modal" onClick={e => e.stopPropagation()}>
                         <div className="modal-header">
                             <h2 className="modal-title">Invite a Friend</h2>
-                            <button className="modal-close" onClick={() => setShowShareModal(false)}>✕</button>
+                            <button className="modal-close" onClick={() => setShowShareModal(false)}>
+                                <span>&times;</span>
+                            </button>
                         </div>
                         <div className="modal-body">
                             <p className="share-info">Share this code with your friend to start playing:</p>
 
-                            <div className="share-code-box">
+                            <div className="share-code-box glass">
                                 <span className="share-code">{roomCode}</span>
                                 <button className="btn btn-secondary btn-sm" onClick={handleCopyCode}>
-                                    {copied ? 'Copied!' : 'Copy Code'}
+                                    {copied ? <Check size={16} /> : <Copy size={16} />}
+                                    {copied ? 'Copied!' : 'Copy'}
                                 </button>
                             </div>
 
@@ -215,21 +239,23 @@ export default function RoomPage() {
                             </div>
 
                             <button className="btn btn-primary btn-lg" onClick={handleCopyLink} style={{ width: '100%' }}>
+                                <Link2 size={18} />
                                 {copied ? 'Link Copied!' : 'Copy Invite Link'}
                             </button>
 
-                            <p className="share-hint">Waiting for opponent to join...</p>
+                            <p className="share-hint">
+                                <Loader2 size={14} className="spinner" />
+                                Waiting for opponent to join...
+                            </p>
                         </div>
                     </div>
                 </div>
             )}
 
-            {/* Confirm Dialog */}
             {confirmDialogProps && (
                 <ConfirmDialog {...confirmDialogProps} />
             )}
 
-            {/* Game Over Modal */}
             {gameState.isEnded && (
                 <GameOverModal
                     result={gameState.result}

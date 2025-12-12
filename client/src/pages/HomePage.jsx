@@ -1,5 +1,16 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import {
+    Plus,
+    LogIn,
+    Zap,
+    MessageSquare,
+    Lock,
+    Heart,
+    Sun,
+    Moon,
+    Crown
+} from 'lucide-react';
 import { useChessSocket } from '../hooks/useChessSocket';
 import CreateRoomModal from '../components/CreateRoomModal';
 import JoinRoomModal from '../components/JoinRoomModal';
@@ -11,8 +22,22 @@ export default function HomePage() {
     const [showCreateModal, setShowCreateModal] = useState(false);
     const [showJoinModal, setShowJoinModal] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
+    const [theme, setTheme] = useState(() => {
+        if (typeof window !== 'undefined') {
+            return localStorage.getItem('theme') || 'system';
+        }
+        return 'system';
+    });
 
-    // Set up callbacks
+    useEffect(() => {
+        if (theme === 'system') {
+            document.documentElement.removeAttribute('data-theme');
+        } else {
+            document.documentElement.setAttribute('data-theme', theme);
+        }
+        localStorage.setItem('theme', theme);
+    }, [theme]);
+
     setCallbacks({
         onRoomCreated: (data) => {
             setIsLoading(false);
@@ -27,10 +52,10 @@ export default function HomePage() {
         }
     });
 
-    const handleCreateRoom = (name, password, timeControl) => {
+    const handleCreateRoom = (name, password) => {
         setIsLoading(true);
         clearError();
-        createRoom(name, password, timeControl);
+        createRoom(name, password);
     };
 
     const handleJoinRoom = (code, name, password) => {
@@ -39,17 +64,20 @@ export default function HomePage() {
         joinRoom(code, name, password);
     };
 
+    const toggleTheme = () => {
+        setTheme(prev => prev === 'dark' ? 'light' : 'dark');
+    };
+
     return (
         <div className="home-page">
-            <div className="home-background">
-                <div className="bg-gradient" />
-                <div className="bg-grid" />
-            </div>
+            <button className="theme-toggle btn btn-ghost btn-icon" onClick={toggleTheme}>
+                {theme === 'dark' ? <Sun size={20} /> : <Moon size={20} />}
+            </button>
 
             <main className="home-content">
                 <header className="home-header">
                     <div className="logo">
-                        <span className="logo-icon">♔</span>
+                        <Crown className="logo-icon" size={40} strokeWidth={1.5} />
                         <h1>Indie Chess</h1>
                     </div>
                     <p className="tagline">Real-time multiplayer chess. Play with friends anywhere.</p>
@@ -62,21 +90,21 @@ export default function HomePage() {
 
                 <div className="action-cards">
                     <button
-                        className="action-card create-card"
+                        className="action-card glass"
                         onClick={() => setShowCreateModal(true)}
                         disabled={!connected}
                     >
-                        <div className="card-icon">✨</div>
+                        <Plus className="card-icon" size={32} />
                         <h3>Create Room</h3>
                         <p>Start a new game and invite a friend</p>
                     </button>
 
                     <button
-                        className="action-card join-card"
+                        className="action-card glass"
                         onClick={() => setShowJoinModal(true)}
                         disabled={!connected}
                     >
-                        <div className="card-icon">🎯</div>
+                        <LogIn className="card-icon" size={32} />
                         <h3>Join Room</h3>
                         <p>Enter a room code to join a game</p>
                     </button>
@@ -84,26 +112,27 @@ export default function HomePage() {
 
                 <div className="features">
                     <div className="feature">
-                        <span className="feature-icon">⚡</span>
+                        <Zap size={16} />
                         <span>Real-time moves</span>
                     </div>
                     <div className="feature">
-                        <span className="feature-icon">💬</span>
+                        <MessageSquare size={16} />
                         <span>In-game chat</span>
                     </div>
                     <div className="feature">
-                        <span className="feature-icon">⏱️</span>
-                        <span>Chess clocks</span>
-                    </div>
-                    <div className="feature">
-                        <span className="feature-icon">🔒</span>
+                        <Lock size={16} />
                         <span>Private rooms</span>
                     </div>
                 </div>
             </main>
 
             <footer className="home-footer">
-                <p>Built with ♥ for chess lovers</p>
+                <p>
+                    Built with <Heart size={14} className="heart-icon" /> Summer by{' '}
+                    <a href="https://github.com/yunkhngn" target="_blank" rel="noopener noreferrer">
+                        yunkhngn
+                    </a>
+                </p>
             </footer>
 
             {showCreateModal && (

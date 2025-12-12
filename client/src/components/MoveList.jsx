@@ -4,14 +4,12 @@ import './MoveList.css';
 export default function MoveList({ moves }) {
     const listRef = useRef(null);
 
-    // Auto-scroll to bottom when new moves are added
     useEffect(() => {
         if (listRef.current) {
             listRef.current.scrollTop = listRef.current.scrollHeight;
         }
     }, [moves]);
 
-    // Group moves into pairs (white, black)
     const movePairs = [];
     for (let i = 0; i < moves.length; i += 2) {
         movePairs.push({

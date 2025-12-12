@@ -31,12 +31,13 @@
 
 .message.own {
     align-self: flex-end;
-    background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-secondary) 100%);
+    background: var(--color-text-primary);
+    color: var(--color-bg-primary);
 }
 
 .message.other {
     align-self: flex-start;
-    background: var(--color-bg-input);
+    background: var(--glass-bg);
     border: 1px solid var(--color-border);
 }
 
@@ -51,23 +52,12 @@
 .message-author {
     font-size: 0.75rem;
     font-weight: 500;
-}
-
-.message-author.white {
-    color: rgba(255, 255, 255, 0.8);
-}
-
-.message-author.black {
-    color: var(--color-text-muted);
+    opacity: 0.8;
 }
 
 .message-time {
     font-size: 0.625rem;
-    color: rgba(255, 255, 255, 0.5);
-}
-
-.message.other .message-time {
-    color: var(--color-text-muted);
+    opacity: 0.6;
 }
 
 .message-text {

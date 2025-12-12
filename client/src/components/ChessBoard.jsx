@@ -1,6 +1,7 @@
 import { useState, useMemo } from 'react';
 import { Chessboard } from 'react-chessboard';
 import { Chess } from 'chess.js';
+import { Loader2 } from 'lucide-react';
 import './ChessBoard.css';
 
 export default function ChessBoard({
@@ -17,14 +18,12 @@ export default function ChessBoard({
     const [optionSquares, setOptionSquares] = useState({});
     const [rightClickedSquares, setRightClickedSquares] = useState({});
 
-    // Create a chess instance for move validation
     const game = useMemo(() => {
         const chess = new Chess();
         chess.load(fen);
         return chess;
     }, [fen]);
 
-    // Get valid moves for a piece
     const getMoveOptions = (square) => {
         const moves = game.moves({ square, verbose: true });
         if (moves.length === 0) return false;
@@ -33,37 +32,33 @@ export default function ChessBoard({
         moves.forEach((move) => {
             newSquares[move.to] = {
                 background: game.get(move.to)
-                    ? 'radial-gradient(circle, rgba(239, 68, 68, 0.6) 85%, transparent 85%)'
-                    : 'radial-gradient(circle, rgba(139, 92, 246, 0.4) 25%, transparent 25%)',
+                    ? 'radial-gradient(circle, rgba(239, 68, 68, 0.5) 85%, transparent 85%)'
+                    : 'radial-gradient(circle, rgba(0, 0, 0, 0.1) 25%, transparent 25%)',
                 borderRadius: '50%'
             };
         });
         newSquares[square] = {
-            background: 'rgba(139, 92, 246, 0.4)'
+            background: 'rgba(59, 130, 246, 0.3)'
         };
         setOptionSquares(newSquares);
         return true;
     };
 
-    // Handle square click
     const onSquareClick = (square) => {
         if (isGameEnded || !isMyTurn) return;
 
-        // If we have a piece selected
         if (moveFrom) {
             const piece = game.get(moveFrom);
 
-            // Check if this is a pawn promotion
             const isPromotion =
                 piece?.type === 'p' &&
                 ((piece.color === 'w' && square[1] === '8') ||
                     (piece.color === 'b' && square[1] === '1'));
 
-            // Try to make the move
             const moveData = {
                 from: moveFrom,
                 to: square,
-                promotion: isPromotion ? 'q' : undefined // Auto-promote to queen for now
+                promotion: isPromotion ? 'q' : undefined
             };
 
             try {
@@ -72,7 +67,6 @@ export default function ChessBoard({
                     onMove(moveFrom, square, isPromotion ? 'q' : null);
                 }
             } catch (e) {
-                // Invalid move, try selecting this square instead
                 const hasMoves = getMoveOptions(square);
                 setMoveFrom(hasMoves ? square : null);
                 if (!hasMoves) setOptionSquares({});
@@ -84,19 +78,16 @@ export default function ChessBoard({
             return;
         }
 
-        // Select a piece
         const hasMoves = getMoveOptions(square);
         setMoveFrom(hasMoves ? square : null);
         if (!hasMoves) setOptionSquares({});
     };
 
-    // Handle piece drag
     const onPieceDragBegin = (piece, sourceSquare) => {
         if (isGameEnded || !isMyTurn) return false;
         getMoveOptions(sourceSquare);
     };
 
-    // Handle piece drop
     const onPieceDrop = (sourceSquare, targetSquare, piece) => {
         if (isGameEnded || !isMyTurn) return false;
 
@@ -128,38 +119,34 @@ export default function ChessBoard({
         return false;
     };
 
-    // Handle right click for annotations
     const onSquareRightClick = (square) => {
-        const color = 'rgba(239, 68, 68, 0.5)';
+        const color = 'rgba(239, 68, 68, 0.4)';
         setRightClickedSquares((prev) => ({
             ...prev,
             [square]: prev[square] ? undefined : { background: color }
         }));
     };
 
-    // Custom square styles
     const customSquareStyles = useMemo(() => {
         const styles = { ...optionSquares, ...rightClickedSquares };
 
-        // Highlight last move
         if (lastMove) {
             styles[lastMove.from] = {
                 ...styles[lastMove.from],
-                background: 'rgba(255, 255, 0, 0.3)'
+                background: 'rgba(59, 130, 246, 0.2)'
             };
             styles[lastMove.to] = {
                 ...styles[lastMove.to],
-                background: 'rgba(255, 255, 0, 0.4)'
+                background: 'rgba(59, 130, 246, 0.3)'
             };
         }
 
-        // Highlight check
         if (isCheck) {
             const kingSquare = findKingSquare(game, game.turn());
             if (kingSquare) {
                 styles[kingSquare] = {
                     ...styles[kingSquare],
-                    background: 'radial-gradient(circle, rgba(239, 68, 68, 0.8) 0%, rgba(239, 68, 68, 0.4) 50%, transparent 70%)'
+                    background: 'radial-gradient(circle, rgba(239, 68, 68, 0.7) 0%, rgba(239, 68, 68, 0.3) 50%, transparent 70%)'
                 };
             }
         }
@@ -178,11 +165,11 @@ export default function ChessBoard({
                 boardOrientation={playerColor || 'white'}
                 customSquareStyles={customSquareStyles}
                 customBoardStyle={{
-                    borderRadius: '8px',
-                    boxShadow: '0 10px 30px rgba(0, 0, 0, 0.5)'
+                    borderRadius: '12px',
+                    boxShadow: '0 8px 32px rgba(0, 0, 0, 0.1)'
                 }}
-                customDarkSquareStyle={{ backgroundColor: '#7c3aed' }}
-                customLightSquareStyle={{ backgroundColor: '#e8edf9' }}
+                customDarkSquareStyle={{ backgroundColor: 'var(--color-black-square)' }}
+                customLightSquareStyle={{ backgroundColor: 'var(--color-white-square)' }}
                 animationDuration={200}
                 arePiecesDraggable={isMyTurn && !isGameEnded}
                 showBoardNotation={true}
@@ -191,7 +178,7 @@ export default function ChessBoard({
             {!isGameStarted && !isGameEnded && (
                 <div className="board-overlay">
                     <div className="waiting-message">
-                        <span className="waiting-icon">⏳</span>
+                        <Loader2 size={32} className="spinner" />
                         <span>Waiting for opponent...</span>
                     </div>
                 </div>
@@ -200,7 +187,6 @@ export default function ChessBoard({
     );
 }
 
-// Helper to find king square
 function findKingSquare(game, color) {
     const board = game.board();
     for (let row = 0; row < 8; row++) {

@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { X, Loader2 } from 'lucide-react';
 import './JoinRoomModal.css';
 
 export default function JoinRoomModal({ onClose, onSubmit, isLoading, error }) {
@@ -7,7 +8,6 @@ export default function JoinRoomModal({ onClose, onSubmit, isLoading, error }) {
     const [password, setPassword] = useState('');
     const [showPassword, setShowPassword] = useState(false);
 
-    // Show password field if error indicates password required
     useEffect(() => {
         if (error?.includes('Password required')) {
             setShowPassword(true);
@@ -22,9 +22,8 @@ export default function JoinRoomModal({ onClose, onSubmit, isLoading, error }) {
     };
 
     const handleRoomCodeChange = (e) => {
-        // Only allow alphanumeric, convert to uppercase
         const value = e.target.value.replace(/[^A-Za-z0-9]/g, '').toUpperCase();
-        setRoomCode(value.slice(0, 6)); // Limit to 6 characters
+        setRoomCode(value.slice(0, 6));
     };
 
     return (
@@ -32,7 +31,9 @@ export default function JoinRoomModal({ onClose, onSubmit, isLoading, error }) {
             <div className="modal join-room-modal" onClick={e => e.stopPropagation()}>
                 <div className="modal-header">
                     <h2 className="modal-title">Join Room</h2>
-                    <button className="modal-close" onClick={onClose}>✕</button>
+                    <button className="modal-close" onClick={onClose}>
+                        <X size={18} />
+                    </button>
                 </div>
 
                 <form onSubmit={handleSubmit} className="modal-body">
@@ -92,7 +93,7 @@ export default function JoinRoomModal({ onClose, onSubmit, isLoading, error }) {
                         >
                             {isLoading ? (
                                 <>
-                                    <span className="spinner" />
+                                    <Loader2 size={16} className="spinner" />
                                     Joining...
                                 </>
                             ) : (

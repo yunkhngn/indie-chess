@@ -10,24 +10,34 @@
 }
 
 .result-badge.win {
-    background: linear-gradient(135deg, rgba(34, 197, 94, 0.2) 0%, rgba(16, 185, 129, 0.1) 100%);
-    border: 1px solid rgba(34, 197, 94, 0.3);
+    background: rgba(34, 197, 94, 0.1);
+    border: 1px solid rgba(34, 197, 94, 0.2);
 }
 
 .result-badge.lose {
-    background: linear-gradient(135deg, rgba(239, 68, 68, 0.2) 0%, rgba(220, 38, 38, 0.1) 100%);
-    border: 1px solid rgba(239, 68, 68, 0.3);
+    background: rgba(239, 68, 68, 0.1);
+    border: 1px solid rgba(239, 68, 68, 0.2);
 }
 
 .result-badge.draw {
-    background: linear-gradient(135deg, rgba(139, 92, 246, 0.2) 0%, rgba(99, 102, 241, 0.1) 100%);
-    border: 1px solid rgba(139, 92, 246, 0.3);
+    background: var(--glass-bg);
+    border: 1px solid var(--color-border);
 }
 
 .result-icon {
-    font-size: 3rem;
-    display: block;
     margin-bottom: var(--spacing-sm);
+}
+
+.result-badge.win .result-icon {
+    color: var(--color-success);
+}
+
+.result-badge.lose .result-icon {
+    color: var(--color-error);
+}
+
+.result-badge.draw .result-icon {
+    color: var(--color-text-muted);
 }
 
 .result-text {
@@ -45,7 +55,7 @@
 }
 
 .result-badge.draw .result-text {
-    color: var(--color-primary-light);
+    color: var(--color-text-primary);
 }
 
 .result-reason {
@@ -64,7 +74,7 @@
 }
 
 .pgn-box {
-    background: var(--color-bg-input);
+    background: var(--glass-bg);
     border: 1px solid var(--color-border);
     border-radius: var(--radius-md);
     padding: var(--spacing-md);

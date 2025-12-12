@@ -7,7 +7,7 @@
 }
 
 .move-count {
-    background: var(--color-bg-input);
+    background: var(--glass-bg);
     padding: var(--spacing-xs) var(--spacing-sm);
     border-radius: var(--radius-full);
     font-size: 0.75rem;
@@ -37,7 +37,7 @@
 }
 
 .move-row:hover {
-    background: var(--color-bg-card-hover);
+    background: var(--glass-bg);
 }
 
 .move-number {
@@ -57,11 +57,11 @@
 }
 
 .move:hover {
-    background: var(--color-bg-input);
+    background: var(--glass-bg-hover);
 }
 
 .move.latest {
-    color: var(--color-primary-light);
+    color: var(--color-accent);
     font-weight: 500;
 }
 

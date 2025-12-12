@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { Flag, Handshake, RotateCcw, ArrowLeftRight } from 'lucide-react';
 import './GameControls.css';
 
 export default function GameControls({
@@ -36,7 +37,7 @@ export default function GameControls({
                             onClick={handleResign}
                             disabled={!hasOpponent}
                         >
-                            <span className="control-icon">🏳️</span>
+                            <Flag size={20} />
                             <span>{showConfirmResign ? 'Confirm?' : 'Resign'}</span>
                         </button>
 
@@ -45,7 +46,7 @@ export default function GameControls({
                             onClick={onOfferDraw}
                             disabled={!hasOpponent}
                         >
-                            <span className="control-icon">🤝</span>
+                            <Handshake size={20} />
                             <span>Offer Draw</span>
                         </button>
                     </>
@@ -57,7 +58,7 @@ export default function GameControls({
                         onClick={onRequestRestart}
                         disabled={!hasOpponent}
                     >
-                        <span className="control-icon">🔄</span>
+                        <RotateCcw size={20} />
                         <span>Rematch</span>
                     </button>
                 )}
@@ -68,7 +69,7 @@ export default function GameControls({
                     disabled={!hasOpponent || (isGameStarted && !isGameEnded)}
                     title={isGameStarted && !isGameEnded ? 'Cannot swap colors during game' : ''}
                 >
-                    <span className="control-icon">🔀</span>
+                    <ArrowLeftRight size={20} />
                     <span>Swap Colors</span>
                 </button>
             </div>

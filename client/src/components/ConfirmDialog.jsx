@@ -1,10 +1,11 @@
+import { HelpCircle } from 'lucide-react';
 import './ConfirmDialog.css';
 
 export default function ConfirmDialog({ title, message, onConfirm, onCancel }) {
     return (
         <div className="modal-overlay">
             <div className="modal confirm-dialog">
-                <div className="confirm-icon">❓</div>
+                <HelpCircle size={48} className="confirm-icon" />
                 <h3 className="confirm-title">{title}</h3>
                 <p className="confirm-message">{message}</p>
                 <div className="confirm-actions">

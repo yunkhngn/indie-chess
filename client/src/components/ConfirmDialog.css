@@ -4,7 +4,7 @@
 }
 
 .confirm-icon {
-    font-size: 3rem;
+    color: var(--color-text-muted);
     margin-bottom: var(--spacing-md);
 }
 

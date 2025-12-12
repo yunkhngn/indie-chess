@@ -65,6 +65,22 @@ A real-time multiplayer chess application with room management, chat, and time c
    
    Navigate to http://localhost:5173
 
+### Using Docker (Development)
+
+Run both frontend and backend with hot reloading:
+
+```bash
+docker-compose -f docker-compose.dev.yml up
+```
+
+- Frontend: http://localhost:5173
+- Backend: http://localhost:3002
+
+Stop with:
+```bash
+docker-compose -f docker-compose.dev.yml down
+```
+
 ## Production Deployment
 
 ### Using Docker Compose

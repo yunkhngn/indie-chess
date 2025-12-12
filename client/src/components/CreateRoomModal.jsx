@@ -1,34 +1,17 @@
 import { useState } from 'react';
+import { X, Loader2 } from 'lucide-react';
 import './CreateRoomModal.css';
-
-const TIME_CONTROLS = [
-    { label: 'Bullet 1+0', initial: 60000, increment: 0 },
-    { label: 'Bullet 2+1', initial: 120000, increment: 1000 },
-    { label: 'Blitz 3+0', initial: 180000, increment: 0 },
-    { label: 'Blitz 5+0', initial: 300000, increment: 0 },
-    { label: 'Blitz 5+3', initial: 300000, increment: 3000 },
-    { label: 'Rapid 10+0', initial: 600000, increment: 0 },
-    { label: 'Rapid 10+5', initial: 600000, increment: 5000 },
-    { label: 'Rapid 15+10', initial: 900000, increment: 10000 },
-    { label: 'Classical 30+0', initial: 1800000, increment: 0 },
-];
 
 export default function CreateRoomModal({ onClose, onSubmit, isLoading, error }) {
     const [name, setName] = useState('');
     const [password, setPassword] = useState('');
     const [usePassword, setUsePassword] = useState(false);
-    const [selectedTimeControl, setSelectedTimeControl] = useState(6); // Default 10+5
 
     const handleSubmit = (e) => {
         e.preventDefault();
         if (!name.trim()) return;
 
-        const timeControl = TIME_CONTROLS[selectedTimeControl];
-        onSubmit(
-            name.trim(),
-            usePassword ? password : null,
-            { initial: timeControl.initial, increment: timeControl.increment }
-        );
+        onSubmit(name.trim(), usePassword ? password : null);
     };
 
     return (
@@ -36,7 +19,9 @@ export default function CreateRoomModal({ onClose, onSubmit, isLoading, error })
             <div className="modal create-room-modal" onClick={e => e.stopPropagation()}>
                 <div className="modal-header">
                     <h2 className="modal-title">Create Room</h2>
-                    <button className="modal-close" onClick={onClose}>✕</button>
+                    <button className="modal-close" onClick={onClose}>
+                        <X size={18} />
+                    </button>
                 </div>
 
                 <form onSubmit={handleSubmit} className="modal-body">
@@ -51,22 +36,6 @@ export default function CreateRoomModal({ onClose, onSubmit, isLoading, error })
                             maxLength={20}
                             autoFocus
                         />
-                    </div>
-
-                    <div className="input-group">
-                        <label className="input-label">Time Control</label>
-                        <div className="time-controls-grid">
-                            {TIME_CONTROLS.map((tc, index) => (
-                                <button
-                                    key={index}
-                                    type="button"
-                                    className={`time-control-btn ${selectedTimeControl === index ? 'selected' : ''}`}
-                                    onClick={() => setSelectedTimeControl(index)}
-                                >
-                                    {tc.label}
-                                </button>
-                            ))}
-                        </div>
                     </div>
 
                     <div className="password-toggle">
@@ -111,7 +80,7 @@ export default function CreateRoomModal({ onClose, onSubmit, isLoading, error })
                         >
                             {isLoading ? (
                                 <>
-                                    <span className="spinner" />
+                                    <Loader2 size={16} className="spinner" />
                                     Creating...
                                 </>
                             ) : (
