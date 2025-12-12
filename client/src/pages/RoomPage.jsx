@@ -7,7 +7,8 @@ import {
     Link2,
     Sun,
     Moon,
-    Loader2
+    Loader2,
+    LogIn
 } from 'lucide-react';
 import { useChessSocket } from '../hooks/useChessSocket';
 import ChessBoard from '../components/ChessBoard';
@@ -22,24 +23,32 @@ export default function RoomPage() {
     const { roomCode } = useParams();
     const navigate = useNavigate();
     const [showShareModal, setShowShareModal] = useState(false);
+    const [showJoinForm, setShowJoinForm] = useState(false);
+    const [joinName, setJoinName] = useState('');
+    const [joinPassword, setJoinPassword] = useState('');
+    const [joinError, setJoinError] = useState(null);
+    const [needsPassword, setNeedsPassword] = useState(false);
     const [copied, setCopied] = useState(false);
     const [theme, setTheme] = useState(() => {
         if (typeof window !== 'undefined') {
-            return localStorage.getItem('theme') || 'system';
+            return localStorage.getItem('theme') || 'dark';
         }
-        return 'system';
+        return 'dark';
     });
 
     const {
         connected,
+        roomCode: connectedRoom,
         playerColor,
         opponentName,
         opponentConnected,
         gameState,
         chat,
         pendingRequest,
+        error,
         makeMove,
         sendChat,
+        joinRoom,
         requestRestart,
         approveRestart,
         declineRestart,
@@ -50,8 +59,40 @@ export default function RoomPage() {
         offerDraw,
         acceptDraw,
         declineDraw,
-        leaveRoom
+        leaveRoom,
+        setCallbacks
     } = useChessSocket();
+
+    // Check if we need to show join form
+    useEffect(() => {
+        if (connected && roomCode && !playerColor && !connectedRoom) {
+            // Not in a room yet, show join form
+            setShowJoinForm(true);
+        }
+    }, [connected, roomCode, playerColor, connectedRoom]);
+
+    // Handle join callbacks
+    useEffect(() => {
+        setCallbacks({
+            onJoinError: (data) => {
+                setJoinError(data.message);
+                if (data.requiresPassword) {
+                    setNeedsPassword(true);
+                }
+            },
+            onJoined: () => {
+                setShowJoinForm(false);
+                setJoinError(null);
+            }
+        });
+    }, [setCallbacks]);
+
+    // Hide join form when we have a color (joined successfully)
+    useEffect(() => {
+        if (playerColor) {
+            setShowJoinForm(false);
+        }
+    }, [playerColor]);
 
     useEffect(() => {
         if (theme === 'system') {
@@ -104,6 +145,14 @@ export default function RoomPage() {
         setTheme(prev => prev === 'dark' ? 'light' : 'dark');
     };
 
+    const handleJoinSubmit = (e) => {
+        e.preventDefault();
+        if (!joinName.trim()) return;
+
+        setJoinError(null);
+        joinRoom(roomCode, joinName.trim(), needsPassword ? joinPassword : null);
+    };
+
     const getConfirmDialogProps = () => {
         if (!pendingRequest) return null;
 
@@ -135,6 +184,68 @@ export default function RoomPage() {
     };
 
     const confirmDialogProps = getConfirmDialogProps();
+
+    // Show join form if not in room
+    if (showJoinForm) {
+        return (
+            <div className="room-page join-page">
+                <div className="join-container">
+                    <div className="modal join-modal">
+                        <div className="modal-header">
+                            <h2 className="modal-title">Join Room</h2>
+                        </div>
+                        <div className="modal-body">
+                            <p className="join-info">
+                                Joining room <strong>{roomCode}</strong>
+                            </p>
+
+                            <form onSubmit={handleJoinSubmit}>
+                                <div className="form-group">
+                                    <label className="form-label">Your Name</label>
+                                    <input
+                                        type="text"
+                                        className="input"
+                                        placeholder="Enter your name"
+                                        value={joinName}
+                                        onChange={(e) => setJoinName(e.target.value)}
+                                        maxLength={20}
+                                        autoFocus
+                                    />
+                                </div>
+
+                                {needsPassword && (
+                                    <div className="form-group">
+                                        <label className="form-label">Room Password</label>
+                                        <input
+                                            type="password"
+                                            className="input"
+                                            placeholder="Enter password"
+                                            value={joinPassword}
+                                            onChange={(e) => setJoinPassword(e.target.value)}
+                                        />
+                                    </div>
+                                )}
+
+                                {joinError && (
+                                    <p className="error-text">{joinError}</p>
+                                )}
+
+                                <div className="form-actions">
+                                    <button type="button" className="btn btn-secondary" onClick={() => navigate('/')}>
+                                        Cancel
+                                    </button>
+                                    <button type="submit" className="btn btn-primary" disabled={!joinName.trim()}>
+                                        <LogIn size={16} />
+                                        Join Game
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        );
+    }
 
     return (
         <div className="room-page">
