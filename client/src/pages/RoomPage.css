@@ -84,6 +84,7 @@
     padding: var(--spacing-sm);
     min-height: 0;
     overflow: hidden;
+    position: relative;
 }
 
 /* Board section */
@@ -96,20 +97,22 @@
     gap: var(--spacing-md);
     min-width: 0;
     min-height: 0;
+    position: relative;
 }
 
 .player-bar-container {
-    width: 100%;
-    max-width: calc(100vh - 180px);
-    display: flex;
+    position: absolute;
+    z-index: 10;
 }
 
 .player-bar-container.top {
-    justify-content: flex-start;
+    top: var(--spacing-md);
+    left: var(--spacing-md);
 }
 
 .player-bar-container.bottom {
-    justify-content: flex-end;
+    bottom: var(--spacing-md);
+    right: var(--spacing-md);
 }
 
 .player-bar {
