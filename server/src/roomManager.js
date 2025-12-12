@@ -18,7 +18,7 @@ class RoomManager {
     return code;
   }
 
-  async createRoom(playerName, password = null) {
+  async createRoom(playerName, password = null, roomName = null) {
     let roomCode;
     do {
       roomCode = this.generateRoomCode();
@@ -32,6 +32,7 @@ class RoomManager {
 
     const room = {
       code: roomCode,
+      name: roomName || `${playerName}'s Game`,
       hasPassword: !!password,
       passwordHash: hashedPassword,
       createdAt: Date.now(),
@@ -312,6 +313,44 @@ class RoomManager {
         this.deleteRoom(roomCode);
       }
     }
+  }
+
+  // Get list of rooms for lobby
+  getPublicRooms() {
+    const rooms = [];
+    
+    for (const [roomCode, room] of this.rooms) {
+      // Count connected players
+      let playerCount = 0;
+      let hasSlot = false;
+      
+      if (room.players.white?.connected) playerCount++;
+      else if (!room.players.white) hasSlot = true;
+      
+      if (room.players.black?.connected) playerCount++;
+      else if (!room.players.black) hasSlot = true;
+      
+      // Only show rooms with at least 1 player and available slots
+      if (playerCount > 0 && hasSlot) {
+        const game = gameManager.getGame(roomCode);
+        
+        rooms.push({
+          code: roomCode,
+          name: room.name,
+          hasPassword: room.hasPassword,
+          playerCount,
+          maxPlayers: 2,
+          createdAt: room.createdAt,
+          isGameStarted: game?.isStarted || false,
+          creatorName: room.players.white?.name || room.players.black?.name || 'Unknown'
+        });
+      }
+    }
+    
+    // Sort by creation time (newest first)
+    rooms.sort((a, b) => b.createdAt - a.createdAt);
+    
+    return rooms;
   }
 }
 

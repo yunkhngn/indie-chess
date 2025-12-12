@@ -5,10 +5,16 @@ export function setupSocketHandlers(io) {
   io.on('connection', (socket) => {
     console.log(`Client connected: ${socket.id}`);
 
+    // Get list of available rooms
+    socket.on('get_rooms', () => {
+      const rooms = roomManager.getPublicRooms();
+      socket.emit('rooms_list', rooms);
+    });
+
     // Create a new room
-    socket.on('create_room', async ({ name, password, timeControl }) => {
+    socket.on('create_room', async ({ name, password, roomName, timeControl }) => {
       try {
-        const result = await roomManager.createRoom(name, password);
+        const result = await roomManager.createRoom(name, password, roomName);
         const { roomCode, playerId, color } = result;
 
         // Initialize game for this room

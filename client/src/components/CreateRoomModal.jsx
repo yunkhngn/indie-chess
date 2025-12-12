@@ -4,6 +4,7 @@ import './CreateRoomModal.css';
 
 export default function CreateRoomModal({ onClose, onSubmit, isLoading, error }) {
     const [name, setName] = useState('');
+    const [roomName, setRoomName] = useState('');
     const [password, setPassword] = useState('');
     const [usePassword, setUsePassword] = useState(false);
 
@@ -11,7 +12,7 @@ export default function CreateRoomModal({ onClose, onSubmit, isLoading, error })
         e.preventDefault();
         if (!name.trim()) return;
 
-        onSubmit(name.trim(), usePassword ? password : null);
+        onSubmit(name.trim(), usePassword ? password : null, roomName.trim() || null);
     };
 
     return (
@@ -35,6 +36,18 @@ export default function CreateRoomModal({ onClose, onSubmit, isLoading, error })
                             onChange={(e) => setName(e.target.value)}
                             maxLength={20}
                             autoFocus
+                        />
+                    </div>
+
+                    <div className="input-group">
+                        <label className="input-label">Room Name <span className="label-optional">(optional)</span></label>
+                        <input
+                            type="text"
+                            className="input"
+                            placeholder="e.g. Casual Game, Tournament Match..."
+                            value={roomName}
+                            onChange={(e) => setRoomName(e.target.value)}
+                            maxLength={30}
                         />
                     </div>
 

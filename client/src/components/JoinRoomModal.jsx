@@ -2,11 +2,30 @@ import { useState, useEffect } from 'react';
 import { X, Loader2 } from 'lucide-react';
 import './JoinRoomModal.css';
 
-export default function JoinRoomModal({ onClose, onSubmit, isLoading, error }) {
+export default function JoinRoomModal({
+    onClose,
+    onSubmit,
+    isLoading,
+    error,
+    prefilledCode = '',
+    requiresPassword = false
+}) {
     const [name, setName] = useState('');
-    const [roomCode, setRoomCode] = useState('');
+    const [roomCode, setRoomCode] = useState(prefilledCode);
     const [password, setPassword] = useState('');
-    const [showPassword, setShowPassword] = useState(false);
+    const [showPassword, setShowPassword] = useState(requiresPassword);
+
+    useEffect(() => {
+        if (prefilledCode) {
+            setRoomCode(prefilledCode);
+        }
+    }, [prefilledCode]);
+
+    useEffect(() => {
+        if (requiresPassword) {
+            setShowPassword(true);
+        }
+    }, [requiresPassword]);
 
     useEffect(() => {
         if (error?.includes('Password required')) {
@@ -59,8 +78,11 @@ export default function JoinRoomModal({ onClose, onSubmit, isLoading, error }) {
                             value={roomCode}
                             onChange={handleRoomCodeChange}
                             maxLength={6}
+                            disabled={!!prefilledCode}
                         />
-                        <span className="input-hint">6-character code from your friend</span>
+                        {!prefilledCode && (
+                            <span className="input-hint">6-character code from your friend</span>
+                        )}
                     </div>
 
                     {showPassword && (

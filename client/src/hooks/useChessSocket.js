@@ -219,6 +219,11 @@ export function useChessSocket() {
       setChat(prev => [...prev, message]);
     });
 
+    // Room list updates
+    newSocket.on('rooms_list', (data) => {
+      callbacksRef.current.onRoomsList?.(data);
+    });
+
     // Clock updates
     newSocket.on('clock_update', (data) => {
       setClocks(data);
@@ -232,9 +237,15 @@ export function useChessSocket() {
   }, []);
 
   // Actions
-  const createRoom = useCallback((name, password = null, timeControl = null) => {
+  const createRoom = useCallback((name, password = null, roomName = null, timeControl = null) => {
     if (socket) {
-      socket.emit('create_room', { name, password, timeControl });
+      socket.emit('create_room', { name, password, roomName, timeControl });
+    }
+  }, [socket]);
+
+  const getRooms = useCallback(() => {
+    if (socket) {
+      socket.emit('get_rooms');
     }
   }, [socket]);
 
@@ -371,6 +382,7 @@ export function useChessSocket() {
     
     // Actions
     createRoom,
+    getRooms,
     joinRoom,
     makeMove,
     sendChat,

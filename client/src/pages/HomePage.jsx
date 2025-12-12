@@ -9,7 +9,10 @@ import {
     Heart,
     Sun,
     Moon,
-    Crown
+    Crown,
+    Users,
+    RefreshCw,
+    LockOpen
 } from 'lucide-react';
 import { useChessSocket } from '../hooks/useChessSocket';
 import CreateRoomModal from '../components/CreateRoomModal';
@@ -18,15 +21,18 @@ import './HomePage.css';
 
 export default function HomePage() {
     const navigate = useNavigate();
-    const { connected, createRoom, joinRoom, error, clearError, setCallbacks } = useChessSocket();
+    const { connected, createRoom, joinRoom, getRooms, error, clearError, setCallbacks } = useChessSocket();
     const [showCreateModal, setShowCreateModal] = useState(false);
     const [showJoinModal, setShowJoinModal] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
+    const [rooms, setRooms] = useState([]);
+    const [roomsLoading, setRoomsLoading] = useState(false);
+    const [selectedRoom, setSelectedRoom] = useState(null);
     const [theme, setTheme] = useState(() => {
         if (typeof window !== 'undefined') {
-            return localStorage.getItem('theme') || 'system';
+            return localStorage.getItem('theme') || 'dark';
         }
-        return 'system';
+        return 'dark';
     });
 
     useEffect(() => {
@@ -38,6 +44,15 @@ export default function HomePage() {
         localStorage.setItem('theme', theme);
     }, [theme]);
 
+    // Fetch rooms on mount and periodically
+    useEffect(() => {
+        if (connected) {
+            handleRefreshRooms();
+            const interval = setInterval(handleRefreshRooms, 10000); // Refresh every 10s
+            return () => clearInterval(interval);
+        }
+    }, [connected]);
+
     setCallbacks({
         onRoomCreated: (data) => {
             setIsLoading(false);
@@ -45,23 +60,44 @@ export default function HomePage() {
         },
         onJoined: (data) => {
             setIsLoading(false);
+            setSelectedRoom(null);
             navigate(`/room/${data.roomCode}`);
         },
         onJoinError: () => {
             setIsLoading(false);
+        },
+        onRoomsList: (data) => {
+            setRooms(data);
+            setRoomsLoading(false);
         }
     });
 
-    const handleCreateRoom = (name, password) => {
+    const handleRefreshRooms = () => {
+        setRoomsLoading(true);
+        getRooms();
+    };
+
+    const handleCreateRoom = (name, password, roomName) => {
         setIsLoading(true);
         clearError();
-        createRoom(name, password);
+        createRoom(name, password, roomName);
     };
 
     const handleJoinRoom = (code, name, password) => {
         setIsLoading(true);
         clearError();
         joinRoom(code, name, password);
+    };
+
+    const handleQuickJoin = (room) => {
+        if (room.hasPassword) {
+            setSelectedRoom(room);
+            setShowJoinModal(true);
+        } else {
+            // For public rooms, show join modal to enter name
+            setSelectedRoom(room);
+            setShowJoinModal(true);
+        }
     };
 
     const toggleTheme = () => {
@@ -101,13 +137,64 @@ export default function HomePage() {
 
                     <button
                         className="action-card glass"
-                        onClick={() => setShowJoinModal(true)}
+                        onClick={() => {
+                            setSelectedRoom(null);
+                            setShowJoinModal(true);
+                        }}
                         disabled={!connected}
                     >
                         <LogIn className="card-icon" size={32} />
                         <h3>Join Room</h3>
                         <p>Enter a room code to join a game</p>
                     </button>
+                </div>
+
+                {/* Room List */}
+                <div className="room-list-section">
+                    <div className="room-list-header">
+                        <h2>Available Rooms</h2>
+                        <button
+                            className="btn btn-ghost btn-sm"
+                            onClick={handleRefreshRooms}
+                            disabled={roomsLoading}
+                        >
+                            <RefreshCw size={16} className={roomsLoading ? 'spinning' : ''} />
+                            Refresh
+                        </button>
+                    </div>
+
+                    {rooms.length === 0 ? (
+                        <div className="room-list-empty">
+                            <p>No rooms available. Create one to start playing!</p>
+                        </div>
+                    ) : (
+                        <div className="room-list">
+                            {rooms.map(room => (
+                                <div key={room.code} className="room-item glass">
+                                    <div className="room-info">
+                                        <div className="room-name">
+                                            {room.hasPassword ? <Lock size={14} /> : <LockOpen size={14} />}
+                                            <span>{room.name}</span>
+                                        </div>
+                                        <div className="room-meta">
+                                            <span className="room-code">{room.code}</span>
+                                            <span className="room-players">
+                                                <Users size={12} />
+                                                {room.playerCount}/{room.maxPlayers}
+                                            </span>
+                                        </div>
+                                    </div>
+                                    <button
+                                        className="btn btn-primary btn-sm"
+                                        onClick={() => handleQuickJoin(room)}
+                                        disabled={isLoading}
+                                    >
+                                        Join
+                                    </button>
+                                </div>
+                            ))}
+                        </div>
+                    )}
                 </div>
 
                 <div className="features">
@@ -151,11 +238,14 @@ export default function HomePage() {
                 <JoinRoomModal
                     onClose={() => {
                         setShowJoinModal(false);
+                        setSelectedRoom(null);
                         clearError();
                     }}
                     onSubmit={handleJoinRoom}
                     isLoading={isLoading}
                     error={error}
+                    prefilledCode={selectedRoom?.code}
+                    requiresPassword={selectedRoom?.hasPassword}
                 />
             )}
         </div>

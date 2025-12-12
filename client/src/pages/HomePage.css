@@ -157,6 +157,96 @@
     color: var(--color-error);
 }
 
+/* Room List */
+.room-list-section {
+    width: 100%;
+    max-width: 600px;
+    margin-bottom: var(--spacing-2xl);
+}
+
+.room-list-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: var(--spacing-md);
+}
+
+.room-list-header h2 {
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--color-text-secondary);
+}
+
+.room-list-empty {
+    text-align: center;
+    padding: var(--spacing-xl);
+    color: var(--color-text-muted);
+    background: var(--glass-bg);
+    border: 1px solid var(--glass-border);
+    border-radius: var(--radius-lg);
+}
+
+.room-list {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-sm);
+}
+
+.room-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: var(--spacing-md);
+    border-radius: var(--radius-md);
+}
+
+.room-info {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-xs);
+}
+
+.room-name {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+    font-weight: 500;
+    color: var(--color-text-primary);
+}
+
+.room-meta {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-md);
+    font-size: 0.75rem;
+    color: var(--color-text-muted);
+}
+
+.room-code {
+    font-family: var(--font-mono);
+    letter-spacing: 0.05em;
+}
+
+.room-players {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.spinning {
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    from {
+        transform: rotate(0deg);
+    }
+
+    to {
+        transform: rotate(360deg);
+    }
+}
+
 @media (max-width: 640px) {
     .logo h1 {
         font-size: 2rem;
@@ -175,5 +265,9 @@
     .features {
         flex-direction: column;
         align-items: center;
+    }
+
+    .room-list-section {
+        max-width: 100%;
     }
 }
