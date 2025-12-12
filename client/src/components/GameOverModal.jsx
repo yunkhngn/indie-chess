@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Trophy, Frown, Handshake, Copy, Download, RotateCcw, LogOut, Check } from 'lucide-react';
+import { Copy, Download, RotateCcw, LogOut, Check, Crown, Minus } from 'lucide-react';
 import './GameOverModal.css';
 
 export default function GameOverModal({ result, playerColor, pgn, onRematch, onLeave }) {
@@ -9,28 +9,26 @@ export default function GameOverModal({ result, playerColor, pgn, onRematch, onL
     const isDraw = result?.winner === null;
 
     const getResultText = () => {
-        if (isDraw) {
-            return 'Draw';
-        }
-        return isWinner ? 'Victory!' : 'Defeat';
+        if (isDraw) return 'Draw';
+        return isWinner ? 'Victory' : 'Defeat';
     };
 
     const getReasonText = () => {
         switch (result?.reason) {
             case 'checkmate':
-                return isWinner ? 'by checkmate' : 'by checkmate';
+                return 'Checkmate';
             case 'resignation':
-                return isWinner ? 'opponent resigned' : 'you resigned';
+                return isWinner ? 'Opponent resigned' : 'You resigned';
             case 'timeout':
-                return isWinner ? 'opponent ran out of time' : 'you ran out of time';
+                return isWinner ? 'Opponent ran out of time' : 'Time out';
             case 'stalemate':
-                return 'by stalemate';
+                return 'Stalemate';
             case 'repetition':
-                return 'by threefold repetition';
+                return 'Threefold repetition';
             case 'insufficient':
-                return 'by insufficient material';
+                return 'Insufficient material';
             case 'agreement':
-                return 'by mutual agreement';
+                return 'By agreement';
             default:
                 return '';
         }
@@ -56,33 +54,35 @@ export default function GameOverModal({ result, playerColor, pgn, onRematch, onL
         URL.revokeObjectURL(url);
     };
 
-    const ResultIcon = isDraw ? Handshake : isWinner ? Trophy : Frown;
-
     return (
         <div className="modal-overlay">
             <div className="modal game-over-modal">
-                <div className={`result-badge ${isDraw ? 'draw' : isWinner ? 'win' : 'lose'}`}>
-                    <ResultIcon size={48} className="result-icon" />
+                <div className={`result-header ${isDraw ? 'draw' : isWinner ? 'win' : 'lose'}`}>
+                    <div className="result-icon-wrapper">
+                        {isDraw ? <Minus size={24} /> : <Crown size={24} />}
+                    </div>
                     <h2 className="result-text">{getResultText()}</h2>
                     <p className="result-reason">{getReasonText()}</p>
                 </div>
 
-                <div className="pgn-section">
-                    <h4>Game PGN</h4>
-                    <div className="pgn-box">
-                        <pre className="pgn-content">{pgn || 'No moves played'}</pre>
+                {pgn && (
+                    <div className="pgn-section">
+                        <div className="pgn-header">
+                            <span className="pgn-label">Game PGN</span>
+                            <div className="pgn-actions">
+                                <button className="btn btn-ghost btn-sm" onClick={handleCopyPGN}>
+                                    {copied ? <Check size={14} /> : <Copy size={14} />}
+                                </button>
+                                <button className="btn btn-ghost btn-sm" onClick={handleDownloadPGN}>
+                                    <Download size={14} />
+                                </button>
+                            </div>
+                        </div>
+                        <div className="pgn-box">
+                            <pre className="pgn-content">{pgn}</pre>
+                        </div>
                     </div>
-                    <div className="pgn-actions">
-                        <button className="btn btn-secondary btn-sm" onClick={handleCopyPGN}>
-                            {copied ? <Check size={14} /> : <Copy size={14} />}
-                            {copied ? 'Copied' : 'Copy'}
-                        </button>
-                        <button className="btn btn-secondary btn-sm" onClick={handleDownloadPGN}>
-                            <Download size={14} />
-                            Download
-                        </button>
-                    </div>
-                </div>
+                )}
 
                 <div className="game-over-actions">
                     <button className="btn btn-secondary" onClick={onLeave}>
