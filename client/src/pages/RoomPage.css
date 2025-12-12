@@ -235,12 +235,14 @@
     .game-container {
         flex-direction: column;
         overflow: visible;
-        padding: var(--spacing-xs);
+        padding: var(--spacing-sm);
     }
 
     .board-section {
         order: 1;
         min-height: auto;
+        /* Ensure board has space for absolute player cards */
+        padding: var(--spacing-2xl) 0;
     }
 
     .sidebar {
@@ -249,6 +251,7 @@
         flex-direction: column;
         overflow: visible;
         gap: var(--spacing-sm);
+        height: auto;
     }
 
     .player-bar {
@@ -262,7 +265,7 @@
         flex-direction: row;
         flex-wrap: wrap;
         gap: var(--spacing-xs);
-        padding: var(--spacing-xs);
+        padding: var(--spacing-sm);
         margin: var(--spacing-xs);
     }
 
@@ -280,6 +283,10 @@
     }
 
     .room-code-display {
+        gap: var(--spacing-xs);
+    }
+
+    .room-label {
         display: none;
     }
 
@@ -296,29 +303,48 @@
     }
 
     .game-container {
-        padding: 0 var(--spacing-xs) var(--spacing-xs);
+        padding: 0 var(--spacing-xs) var(--spacing-md);
     }
 
     .board-section {
-        padding: 0;
+        padding: var(--spacing-xl) 0;
+    }
+
+    .player-bar-container.top {
+        top: 0;
+        left: 0;
+    }
+
+    .player-bar-container.bottom {
+        bottom: 0;
+        right: 0;
     }
 
     .player-bar {
-        padding: var(--spacing-xs);
+        padding: var(--spacing-xs) var(--spacing-sm);
+        gap: var(--spacing-xs);
+        min-width: unset;
     }
 
     .player-name {
-        font-size: 0.75rem;
+        font-size: 0.8rem;
+    }
+
+    .color-indicator {
+        width: 12px;
+        height: 12px;
     }
 
     .sidebar {
         gap: var(--spacing-xs);
+        padding: 0;
     }
 
     /* Collapse sidebar cards on mobile */
     .sidebar .card {
-        max-height: 200px;
+        max-height: 250px;
         overflow: auto;
+        padding: var(--spacing-md);
     }
 
     .sidebar .move-list {
@@ -326,7 +352,7 @@
     }
 
     .sidebar .chat-panel {
-        max-height: 200px;
+        max-height: 250px;
     }
 }
 
@@ -338,12 +364,11 @@
     }
 
     .game-container {
-        padding: 0;
+        padding: 0 0 var(--spacing-md);
     }
 
-    .player-bar {
-        border-radius: var(--radius-sm);
-        margin: 0 var(--spacing-xs);
+    .board-section {
+        padding: var(--spacing-lg) 0;
     }
 }
 
