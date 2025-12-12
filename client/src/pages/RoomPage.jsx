@@ -295,6 +295,7 @@ export default function RoomPage() {
                         isGameEnded={gameState.isEnded}
                         lastMove={gameState.moves[gameState.moves.length - 1]}
                         isCheck={gameState.isCheck}
+                        opponentConnected={opponentConnected}
                     />
 
                     <div className="player-bar player">

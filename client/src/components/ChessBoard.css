@@ -31,6 +31,15 @@
     font-size: 1rem;
 }
 
+.pause-subtext {
+    font-size: 0.875rem;
+    opacity: 0.8;
+}
+
+.board-overlay.paused {
+    background: rgba(0, 0, 0, 0.7);
+}
+
 @media (max-width: 1024px) {
     .chess-board-wrapper {
         max-width: min(500px, 90vw);

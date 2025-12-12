@@ -1,7 +1,7 @@
 import { useState, useMemo } from 'react';
 import { Chessboard } from 'react-chessboard';
 import { Chess } from 'chess.js';
-import { Loader2 } from 'lucide-react';
+import { Loader2, Pause } from 'lucide-react';
 import './ChessBoard.css';
 
 export default function ChessBoard({
@@ -12,7 +12,8 @@ export default function ChessBoard({
     isGameStarted,
     isGameEnded,
     lastMove,
-    isCheck
+    isCheck,
+    opponentConnected = true
 }) {
     const [moveFrom, setMoveFrom] = useState(null);
     const [optionSquares, setOptionSquares] = useState({});
@@ -45,7 +46,7 @@ export default function ChessBoard({
     };
 
     const onSquareClick = (square) => {
-        if (isGameEnded || !isMyTurn) return;
+        if (isGameEnded || !isMyTurn || !opponentConnected) return;
 
         if (moveFrom) {
             const piece = game.get(moveFrom);
@@ -84,12 +85,12 @@ export default function ChessBoard({
     };
 
     const onPieceDragBegin = (piece, sourceSquare) => {
-        if (isGameEnded || !isMyTurn) return false;
+        if (isGameEnded || !isMyTurn || !opponentConnected) return false;
         getMoveOptions(sourceSquare);
     };
 
     const onPieceDrop = (sourceSquare, targetSquare, piece) => {
-        if (isGameEnded || !isMyTurn) return false;
+        if (isGameEnded || !isMyTurn || !opponentConnected) return false;
 
         const pieceType = piece[1].toLowerCase();
         const isPromotion =
@@ -154,6 +155,9 @@ export default function ChessBoard({
         return styles;
     }, [optionSquares, rightClickedSquares, lastMove, isCheck, game]);
 
+    // Game is paused when opponent disconnects during an active game
+    const isPaused = isGameStarted && !isGameEnded && !opponentConnected;
+
     return (
         <div className={`chess-board-wrapper ${!isMyTurn && isGameStarted ? 'not-my-turn' : ''}`}>
             <Chessboard
@@ -171,7 +175,7 @@ export default function ChessBoard({
                 customDarkSquareStyle={{ backgroundColor: 'var(--color-black-square)' }}
                 customLightSquareStyle={{ backgroundColor: 'var(--color-white-square)' }}
                 animationDuration={200}
-                arePiecesDraggable={isMyTurn && !isGameEnded}
+                arePiecesDraggable={isMyTurn && !isGameEnded && opponentConnected}
                 showBoardNotation={true}
             />
 
@@ -180,6 +184,16 @@ export default function ChessBoard({
                     <div className="waiting-message">
                         <Loader2 size={32} className="spinner" />
                         <span>Waiting for opponent...</span>
+                    </div>
+                </div>
+            )}
+
+            {isPaused && (
+                <div className="board-overlay paused">
+                    <div className="waiting-message">
+                        <Pause size={32} />
+                        <span>Game Paused</span>
+                        <span className="pause-subtext">Waiting for opponent to reconnect...</span>
                     </div>
                 </div>
             )}
