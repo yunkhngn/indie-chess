@@ -105,12 +105,12 @@
 
 .player-bar-container.top {
     top: var(--spacing-md);
-    right: var(--spacing-md);
+    left: var(--spacing-md);
 }
 
 .player-bar-container.bottom {
     bottom: var(--spacing-md);
-    left: var(--spacing-md);
+    right: var(--spacing-md);
 }
 
 .player-bar {
