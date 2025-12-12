@@ -170,11 +170,12 @@
 /* Sidebars */
 .sidebar-left,
 .sidebar-right {
-    width: 320px;
+    width: 350px;
+    /* Increased width as requested */
     flex-shrink: 0;
     display: flex;
     flex-direction: column;
-    gap: var(--spacing-md);
+    gap: var(--spacing-sm);
     min-height: 0;
     overflow: hidden;
     padding: var(--spacing-sm);
@@ -196,10 +197,14 @@
     overflow-y: auto;
 }
 
+/* Chat & Controls Container in Right Sidebar */
+.sidebar-right {
+    gap: var(--spacing-xs);
+    /* Tighter spacing */
+}
+
 .sidebar-right .chat-panel {
     flex: 1;
-    /* Chat takes remaining space */
-    min-height: 0;
     display: flex;
     flex-direction: column;
     height: 100%;
@@ -208,9 +213,19 @@
 /* Ensure the card wrapper also grows */
 .sidebar-right .card:has(.chat-panel) {
     flex: 1;
+    /* Chat takes all remaining space */
     display: flex;
     flex-direction: column;
     min-height: 0;
+    margin-bottom: 0;
+    /* Snap to controls */
+}
+
+/* Ensure controls stay at bottom and don't shrink */
+.sidebar-right .game-controls {
+    flex-shrink: 0;
+    margin-top: 0;
+    /* Removing auto margin, relying on flex-grow of chat */
 }
 
 .sidebar-right .chat-messages {
