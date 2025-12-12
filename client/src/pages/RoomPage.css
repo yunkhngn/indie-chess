@@ -285,8 +285,9 @@
         padding: 0;
     }
 
+    /* Hide player bars on mobile - show info in header instead */
     .player-bar {
-        padding: var(--spacing-xs);
+        display: none;
     }
 
     .player-name {
@@ -299,16 +300,32 @@
 
     /* Collapse sidebar cards on mobile */
     .sidebar .card {
-        max-height: 200px;
-        overflow: auto;
+        padding: var(--spacing-sm);
     }
 
-    .sidebar .move-list {
+    .sidebar .card-header {
+        padding-bottom: var(--spacing-xs);
+    }
+
+    .move-list {
+        max-height: 120px;
+    }
+
+    .chat-panel {
         max-height: 150px;
     }
 
-    .sidebar .chat-panel {
-        max-height: 200px;
+    .game-controls {
+        padding: var(--spacing-sm);
+    }
+
+    .controls-grid {
+        gap: var(--spacing-xs);
+    }
+
+    .control-btn {
+        padding: var(--spacing-xs) var(--spacing-sm);
+        font-size: 0.75rem;
     }
 }
 
@@ -317,15 +334,16 @@
     .room-header {
         margin: 0;
         border-radius: 0;
+        padding: var(--spacing-xs);
     }
 
     .game-container {
         padding: 0;
+        gap: var(--spacing-xs);
     }
 
-    .player-bar {
-        border-radius: var(--radius-sm);
-        margin: 0 var(--spacing-xs);
+    .sidebar {
+        padding: 0 var(--spacing-xs) var(--spacing-xs);
     }
 }
 
