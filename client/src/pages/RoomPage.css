@@ -158,8 +158,9 @@
     text-overflow: ellipsis;
 }
 
-/* Sidebar */
-.sidebar {
+/* Sidebars */
+.sidebar-left,
+.sidebar-right {
     width: 320px;
     flex-shrink: 0;
     display: flex;
@@ -169,48 +170,40 @@
     overflow: hidden;
     padding: var(--spacing-sm);
     height: 100%;
-    /* Fill height */
 }
 
-/* Chat panel flex grow */
-.sidebar .chat-panel {
+/* Specific Sidebar Adjustments */
+.sidebar-left .card {
     flex: 1;
-    /* Take remaining space */
+    /* Move list takes full height */
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    min-height: 0;
+}
+
+.sidebar-left .move-list-content {
+    flex: 1;
+    overflow-y: auto;
+}
+
+.sidebar-right .chat-panel {
+    flex: 1;
+    /* Chat takes remaining space */
     min-height: 0;
     display: flex;
     flex-direction: column;
 }
 
-.sidebar .chat-messages {
+.sidebar-right .chat-messages {
     flex: 1;
     overflow-y: auto;
 }
 
-/* Move List Container - Bottom Left */
+/* Move List (No longer absolute) */
 .move-list-container {
-    position: absolute;
-    bottom: var(--spacing-md);
-    left: var(--spacing-md);
-    width: 300px;
-    max-height: 300px;
-    /* Limit height so it doesn't grow too tall */
-    display: flex;
-    flex-direction: column;
-    z-index: 20;
-    /* Above board if needed */
-}
-
-/* Styling specifically for the move list when in this container */
-.move-list-container .card {
-    height: 100%;
-    max-height: 100%;
-    display: flex;
-    flex-direction: column;
-}
-
-.move-list-container .move-list-content {
-    flex: 1;
-    overflow-y: auto;
+    display: none;
+    /* Removed/Refactored */
 }
 
 /* Share Modal */
@@ -288,7 +281,8 @@
         padding: var(--spacing-2xl) 0;
     }
 
-    .sidebar {
+    .sidebar-left,
+    .sidebar-right {
         order: 2;
         width: 100%;
         flex-direction: column;
@@ -360,7 +354,8 @@
         justify-content: center;
     }
 
-    .sidebar {
+    .sidebar-left,
+    .sidebar-right {
         display: none;
     }
 }
