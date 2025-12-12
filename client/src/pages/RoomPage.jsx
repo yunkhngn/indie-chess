@@ -291,9 +291,11 @@ export default function RoomPage() {
 
             <main className="game-container">
                 <div className="board-section">
-                    <div className="player-bar opponent">
-                        <span className={`color-indicator ${playerColor === 'white' ? 'black' : 'white'}`} />
-                        <span className="player-name">{opponentName || 'Waiting for opponent...'}</span>
+                    <div className="player-bar-container top">
+                        <div className="player-bar opponent">
+                            <span className={`color-indicator ${playerColor === 'white' ? 'black' : 'white'}`} />
+                            <span className="player-name">{opponentName || 'Waiting...'}</span>
+                        </div>
                     </div>
 
                     <ChessBoard
@@ -308,9 +310,11 @@ export default function RoomPage() {
                         opponentConnected={opponentConnected}
                     />
 
-                    <div className="player-bar player">
-                        <span className={`color-indicator ${playerColor || 'white'}`} />
-                        <span className="player-name">You</span>
+                    <div className="player-bar-container bottom">
+                        <div className="player-bar player">
+                            <span className={`color-indicator ${playerColor || 'white'}`} />
+                            <span className="player-name">You</span>
+                        </div>
                     </div>
                 </div>
 
