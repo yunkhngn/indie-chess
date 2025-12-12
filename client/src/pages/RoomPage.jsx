@@ -138,10 +138,6 @@ export default function RoomPage() {
 
     return (
         <div className="room-page">
-            <button className="theme-toggle btn btn-ghost btn-icon" onClick={toggleTheme}>
-                {theme === 'dark' ? <Sun size={20} /> : <Moon size={20} />}
-            </button>
-
             <header className="room-header glass">
                 <div className="room-info">
                     <button className="btn btn-ghost" onClick={handleLeaveRoom}>
@@ -157,32 +153,28 @@ export default function RoomPage() {
                     </div>
                 </div>
 
-                <div className="connection-info">
-                    <span className={`status-indicator ${connected ? 'connected' : 'disconnected'}`} />
-                    <span className="status-text">
-                        {!connected ? 'Reconnecting...' :
-                            !opponentConnected ? 'Waiting for opponent...' :
-                                opponentName}
-                    </span>
+                <div className="header-right">
+                    <div className="connection-info">
+                        <span className={`status-indicator ${connected ? 'connected' : 'disconnected'}`} />
+                        <span className="status-text">
+                            {!connected ? 'Reconnecting...' :
+                                !opponentConnected ? 'Waiting for opponent...' :
+                                    opponentName}
+                        </span>
+                    </div>
+                    <button className="btn btn-ghost btn-icon" onClick={toggleTheme}>
+                        {theme === 'dark' ? <Sun size={18} /> : <Moon size={18} />}
+                    </button>
                 </div>
             </header>
 
             <main className="game-container">
-                <div className="game-sidebar left-sidebar">
-                    <div className="player-info glass opponent">
+                <div className="board-section">
+                    <div className="player-bar opponent">
                         <span className={`color-indicator ${playerColor === 'white' ? 'black' : 'white'}`} />
-                        <span className="player-name">{opponentName || 'Waiting...'}</span>
+                        <span className="player-name">{opponentName || 'Waiting for opponent...'}</span>
                     </div>
 
-                    <MoveList moves={gameState.moves} />
-
-                    <div className="player-info glass player">
-                        <span className={`color-indicator ${playerColor || 'white'}`} />
-                        <span className="player-name">You</span>
-                    </div>
-                </div>
-
-                <div className="board-container">
                     <ChessBoard
                         fen={gameState.fen}
                         playerColor={playerColor}
@@ -193,9 +185,16 @@ export default function RoomPage() {
                         lastMove={gameState.moves[gameState.moves.length - 1]}
                         isCheck={gameState.isCheck}
                     />
+
+                    <div className="player-bar player">
+                        <span className={`color-indicator ${playerColor || 'white'}`} />
+                        <span className="player-name">You</span>
+                    </div>
                 </div>
 
-                <div className="game-sidebar right-sidebar">
+                <div className="sidebar">
+                    <MoveList moves={gameState.moves} />
+
                     <ChatPanel
                         messages={chat}
                         onSend={sendChat}

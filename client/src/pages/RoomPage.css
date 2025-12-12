@@ -9,15 +9,15 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: var(--spacing-md) var(--spacing-lg);
-    margin: var(--spacing-md);
+    padding: var(--spacing-sm) var(--spacing-lg);
+    margin: var(--spacing-sm) var(--spacing-sm) 0;
     border-radius: var(--radius-lg);
 }
 
 .room-info {
     display: flex;
     align-items: center;
-    gap: var(--spacing-lg);
+    gap: var(--spacing-md);
 }
 
 .room-code-display {
@@ -35,10 +35,16 @@
 
 .room-code {
     font-family: var(--font-mono);
-    font-size: 1.125rem;
+    font-size: 1rem;
     font-weight: 600;
     color: var(--color-text-primary);
     letter-spacing: 0.1em;
+}
+
+.header-right {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-md);
 }
 
 .connection-info {
@@ -67,55 +73,51 @@
     color: var(--color-text-secondary);
 }
 
+/* Main game container - board focused layout */
 .game-container {
     flex: 1;
-    display: grid;
-    grid-template-columns: 280px 1fr 320px;
-    gap: var(--spacing-lg);
-    padding: 0 var(--spacing-lg) var(--spacing-lg);
-    max-width: 1600px;
+    display: flex;
+    gap: var(--spacing-md);
+    padding: var(--spacing-sm);
+    max-width: 1400px;
     margin: 0 auto;
     width: 100%;
 }
 
-.game-sidebar {
+/* Board section - takes most space */
+.board-section {
+    flex: 1;
     display: flex;
     flex-direction: column;
-    gap: var(--spacing-md);
-}
-
-.left-sidebar {
-    min-width: 280px;
-}
-
-.right-sidebar {
-    min-width: 320px;
-}
-
-.board-container {
-    display: flex;
     align-items: center;
     justify-content: center;
-    padding: var(--spacing-md);
+    gap: var(--spacing-sm);
+    min-width: 0;
 }
 
-.player-info {
+.player-bar {
     display: flex;
     align-items: center;
     gap: var(--spacing-sm);
-    padding: var(--spacing-md) var(--spacing-lg);
-    border-radius: var(--radius-lg);
+    padding: var(--spacing-sm) var(--spacing-md);
+    background: var(--glass-bg);
+    backdrop-filter: var(--glass-blur);
+    border: 1px solid var(--glass-border);
+    border-radius: var(--radius-md);
+    width: 100%;
+    max-width: 600px;
 }
 
-.player-info.player {
-    border: 1px solid var(--color-accent-light);
+.player-bar.player {
+    border-color: var(--color-accent-light);
 }
 
 .color-indicator {
-    width: 16px;
-    height: 16px;
+    width: 14px;
+    height: 14px;
     border-radius: var(--radius-sm);
     border: 1px solid var(--color-border);
+    flex-shrink: 0;
 }
 
 .color-indicator.white {
@@ -128,7 +130,19 @@
 
 .player-name {
     font-weight: 500;
+    font-size: 0.9375rem;
     color: var(--color-text-primary);
+}
+
+/* Sidebar - fixed width */
+.sidebar {
+    width: 320px;
+    flex-shrink: 0;
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-sm);
+    max-height: calc(100vh - 80px);
+    overflow-y: auto;
 }
 
 /* Share Modal */
@@ -186,41 +200,51 @@
 }
 
 /* Responsive */
-@media (max-width: 1200px) {
+@media (max-width: 1024px) {
     .game-container {
-        grid-template-columns: 1fr;
-        grid-template-rows: auto auto auto;
+        flex-direction: column;
     }
 
-    .left-sidebar {
-        order: 2;
-        flex-direction: row;
-        flex-wrap: wrap;
-        justify-content: space-between;
-    }
-
-    .board-container {
+    .board-section {
         order: 1;
     }
 
-    .right-sidebar {
-        order: 3;
+    .sidebar {
+        order: 2;
+        width: 100%;
+        max-height: none;
+        flex-direction: row;
+        flex-wrap: wrap;
+    }
+
+    .sidebar>* {
+        flex: 1;
+        min-width: 280px;
     }
 }
 
-@media (max-width: 768px) {
+@media (max-width: 640px) {
     .room-header {
         flex-direction: column;
-        gap: var(--spacing-md);
+        gap: var(--spacing-sm);
+        padding: var(--spacing-sm);
     }
 
-    .game-container {
-        padding: var(--spacing-md);
-        gap: var(--spacing-md);
+    .room-info {
+        width: 100%;
+        justify-content: space-between;
     }
 
-    .left-sidebar,
-    .right-sidebar {
+    .header-right {
+        width: 100%;
+        justify-content: space-between;
+    }
+
+    .sidebar {
+        flex-direction: column;
+    }
+
+    .sidebar>* {
         min-width: auto;
     }
 }
