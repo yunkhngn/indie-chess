@@ -25,7 +25,9 @@ class GameManager {
       clockInterval: null,
       isStarted: false,
       isEnded: false,
-      result: null
+      result: null,
+      whiteName: null,
+      blackName: null
     };
 
     this.games.set(roomCode, game);
@@ -34,6 +36,21 @@ class GameManager {
 
   getGame(roomCode) {
     return this.games.get(roomCode);
+  }
+
+  setPlayerNames(roomCode, whiteName, blackName) {
+    const game = this.games.get(roomCode);
+    if (!game) return;
+    
+    game.whiteName = whiteName;
+    game.blackName = blackName;
+    
+    // Set PGN headers
+    game.chess.header('Event', 'Indie Chess Game');
+    game.chess.header('Site', 'chess.yunkhngn.dev');
+    game.chess.header('Date', new Date().toISOString().split('T')[0]);
+    game.chess.header('White', whiteName || 'White');
+    game.chess.header('Black', blackName || 'Black');
   }
 
   startGame(roomCode) {

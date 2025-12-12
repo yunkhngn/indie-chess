@@ -52,6 +52,11 @@ export function setupSocketHandlers(io) {
         const gameState = gameManager.getGameState(roomCode);
         const room = roomManager.getRoom(roomCode);
 
+        // Set player names for PGN
+        const whiteName = room.players.white?.name || 'White';
+        const blackName = room.players.black?.name || 'Black';
+        gameManager.setPlayerNames(roomCode, whiteName, blackName);
+
         // Start the game now that both players joined
         gameManager.startGame(roomCode);
 
