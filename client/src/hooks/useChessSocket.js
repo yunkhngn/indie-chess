@@ -146,6 +146,8 @@ export function useChessSocket() {
     newSocket.on('game_started', (data) => {
       setGameState(prev => ({ ...prev, isStarted: true }));
       setClocks(data.clocks);
+      // Game can only start when opponent joins, so they must be connected
+      setOpponentConnected(true);
     });
 
     newSocket.on('move_made', (data) => {
