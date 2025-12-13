@@ -29,13 +29,7 @@ export default function ChessBoard({
         return chess;
     }, [fen]);
 
-    // Calculate arrows for suggested move
-    const customArrows = useMemo(() => {
-        if (!suggestedMove || suggestedMove.length < 4 || suggestedMove === '(none)') return [];
-        const from = suggestedMove.substring(0, 2);
-        const to = suggestedMove.substring(2, 4);
-        return [[from, to, 'rgba(255, 170, 0, 0.8)']]; // Orange arrow
-    }, [suggestedMove]);
+
 
     // Play sound when a move is made (fen changes)
     useEffect(() => {
@@ -182,8 +176,27 @@ export default function ChessBoard({
             }
         }
 
+        // Highlight suggested move squares
+        if (suggestedMove && suggestedMove.length === 4 && suggestedMove !== '(none)') {
+            const from = suggestedMove.substring(0, 2);
+            const to = suggestedMove.substring(2, 4);
+
+            styles[from] = {
+                ...styles[from],
+                boxShadow: 'inset 0 0 10px rgba(255, 170, 0, 0.8)',
+                transition: 'box-shadow 0.3s ease'
+            };
+
+            styles[to] = {
+                ...styles[to],
+                boxShadow: 'inset 0 0 10px rgba(255, 170, 0, 0.8), inset 0 0 20px rgba(255, 255, 255, 0.4)',
+                background: 'rgba(255, 170, 0, 0.2)',
+                transition: 'all 0.3s ease'
+            };
+        }
+
         return styles;
-    }, [optionSquares, rightClickedSquares, lastMove, isCheck, game]);
+    }, [optionSquares, rightClickedSquares, lastMove, isCheck, game, suggestedMove]);
 
     // Game is paused when opponent disconnects during an active game
     const isPaused = isGameStarted && !isGameEnded && !opponentConnected;
@@ -199,7 +212,6 @@ export default function ChessBoard({
                 onSquareRightClick={onSquareRightClick}
                 boardOrientation={playerColor}
                 customSquareStyles={customSquareStyles}
-                customArrows={customArrows}
                 areArrowsAllowed={true}
                 customBoardStyle={{
                     borderRadius: '12px',
