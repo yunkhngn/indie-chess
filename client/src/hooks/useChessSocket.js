@@ -118,6 +118,7 @@ export function useChessSocket() {
       });
       setClocks(data.clocks);
       setChat(data.chat || []);
+      callbacksRef.current.onReconnected?.(data);
     });
 
     newSocket.on('reconnect_error', (data) => {

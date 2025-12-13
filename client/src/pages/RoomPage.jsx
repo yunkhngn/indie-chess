@@ -67,11 +67,26 @@ export default function RoomPage() {
         setCallbacks
     } = useChessSocket();
 
-    // Check if we need to show join form
+    // Check if we need to show join form (wait for potential reconnection first)
     useEffect(() => {
         if (connected && roomCode && !playerColor && !connectedRoom) {
-            // Not in a room yet, show join form
-            setShowJoinForm(true);
+            // Check if we have stored session - if so, wait for reconnection attempt
+            const storedRoom = sessionStorage.getItem('chess_room');
+            const storedPlayer = sessionStorage.getItem('chess_player');
+
+            if (storedRoom === roomCode && storedPlayer) {
+                // We have matching session, wait a bit for reconnection
+                const timer = setTimeout(() => {
+                    // If still not connected after delay, show join form
+                    if (!playerColor) {
+                        setShowJoinForm(true);
+                    }
+                }, 1500); // Wait 1.5s for reconnection attempt
+                return () => clearTimeout(timer);
+            } else {
+                // No matching session, show join form immediately
+                setShowJoinForm(true);
+            }
         }
     }, [connected, roomCode, playerColor, connectedRoom]);
 
@@ -87,6 +102,9 @@ export default function RoomPage() {
             onJoined: () => {
                 setShowJoinForm(false);
                 setJoinError(null);
+            },
+            onReconnected: () => {
+                setShowJoinForm(false);
             }
         });
     }, [setCallbacks]);
@@ -373,7 +391,7 @@ export default function RoomPage() {
                 <div className="board-centering-container">
                     {/* Mobile Player Bar (Opponent) */}
                     <div className="mobile-player-bar top mobile-only">
-                        <span className={`color-indicator ${playerColor === 'white' ? 'black' : 'white'}`} />
+                        Opponent's side:
                         <span className="name">{opponentName || 'Waiting...'}</span>
                     </div>
 
@@ -391,8 +409,7 @@ export default function RoomPage() {
 
                     {/* Mobile Player Bar (Self) */}
                     <div className="mobile-player-bar bottom mobile-only">
-                        <span className={`color-indicator ${playerColor || 'white'}`} />
-                        <span className="name">You</span>
+                        Your side
                     </div>
                 </div>
             </main>
