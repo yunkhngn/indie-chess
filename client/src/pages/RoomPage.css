@@ -64,13 +64,25 @@
     border-radius: var(--radius-sm);
 }
 
-.theme-toggle {
+.header-actions {
     display: flex;
     align-items: center;
-    justify-content: center;
-    height: 32px;
-    /* Set fixed height matching other elements */
-    width: 32px;
+    gap: var(--spacing-xs);
+}
+
+.mobile-collapse-btn {
+    display: none;
+}
+
+/* Collapsible section */
+.sidebar-collapsible {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-md);
+    flex: 1;
+    min-height: 0;
+    overflow: hidden;
+    transition: all 0.3s ease;
 }
 
 /* Player Profiles Card (Inside Sidebar) */
@@ -374,8 +386,19 @@
         display: flex;
     }
 
-    /* Hide desktop profile section in sidebar on mobile since we have bars? 
-       Actually, keep it for detail, but maybe styled differently. */
+    .mobile-collapse-btn {
+        display: flex;
+    }
+
+    /* Collapsed sidebar on mobile */
+    .dashboard-sidebar.collapsed .sidebar-collapsible {
+        display: none;
+    }
+
+    .dashboard-sidebar.collapsed {
+        height: auto;
+        padding-bottom: var(--spacing-sm);
+    }
 }
 
 /* Mobile Responsive */

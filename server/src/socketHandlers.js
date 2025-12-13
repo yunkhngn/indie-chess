@@ -121,8 +121,14 @@ export function setupSocketHandlers(io) {
         playerId,
         color,
         players: {
-          white: room.players.white?.name,
-          black: room.players.black?.name
+          white: {
+            name: room.players.white?.name,
+            connected: room.players.white?.connected || false
+          },
+          black: {
+            name: room.players.black?.name,
+            connected: room.players.black?.connected || false
+          }
         },
         ...gameState,
         chat: room.chat

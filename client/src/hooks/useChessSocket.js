@@ -101,11 +101,14 @@ export function useChessSocket() {
     });
 
     newSocket.on('reconnected', (data) => {
+      const opponentColor = data.color === 'white' ? 'black' : 'white';
+      const opponentPlayer = data.players[opponentColor];
+      
       setRoomCode(data.roomCode);
       setPlayerId(data.playerId);
       setPlayerColor(data.color);
-      setOpponentConnected(!!data.players[data.color === 'white' ? 'black' : 'white']);
-      setOpponentName(data.players[data.color === 'white' ? 'black' : 'white']);
+      setOpponentConnected(opponentPlayer?.connected || false);
+      setOpponentName(opponentPlayer?.name);
       setGameState({
         fen: data.fen,
         moves: data.moves || [],

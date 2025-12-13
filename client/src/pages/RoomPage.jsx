@@ -8,7 +8,9 @@ import {
     Sun,
     Moon,
     Loader2,
-    LogIn
+    LogIn,
+    ChevronUp,
+    ChevronDown
 } from 'lucide-react';
 import { useChessSocket } from '../hooks/useChessSocket';
 import ChessBoard from '../components/ChessBoard';
@@ -33,6 +35,7 @@ export default function RoomPage() {
     // Tab state for Dashboard Layout
     const [activeTab, setActiveTab] = useState('moves'); // Default to moves or chat
     const [rematchRequested, setRematchRequested] = useState(false);
+    const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
     const [theme, setTheme] = useState(() => {
         if (typeof window !== 'undefined') {
             return localStorage.getItem('theme') || 'dark';
@@ -290,10 +293,9 @@ export default function RoomPage() {
     return (
         <div className="room-page dashboard-layout">
             {/* Left Panel: Control Center */}
-            <aside className="dashboard-sidebar">
+            <aside className={`dashboard-sidebar ${sidebarCollapsed ? 'collapsed' : ''}`}>
                 <div className="sidebar-header">
                     <div className="room-info-compact">
-                        <span className="room-label">Room</span>
                         <code className="room-code">{roomCode}</code>
                         <button className="btn btn-ghost btn-xs" onClick={handleCopyCode} title="Copy Room Code">
                             {copied ? <Check size={14} /> : <Copy size={14} />}
@@ -304,85 +306,94 @@ export default function RoomPage() {
                             <span className="btn-text-xs">Leave</span>
                         </button>
                     </div>
-                    <div className="theme-toggle">
+                    <div className="header-actions">
                         <button className="btn btn-ghost btn-icon btn-sm" onClick={toggleTheme}>
                             {theme === 'dark' ? <Sun size={16} /> : <Moon size={16} />}
+                        </button>
+                        <button
+                            className="btn btn-ghost btn-icon btn-sm mobile-collapse-btn"
+                            onClick={() => setSidebarCollapsed(!sidebarCollapsed)}
+                        >
+                            {sidebarCollapsed ? <ChevronDown size={16} /> : <ChevronUp size={16} />}
                         </button>
                     </div>
                 </div>
 
-                {/* Player Profiles */}
-                <div className="profiles-section">
-                    <div className="profile-row opponent">
-                        <div className="profile-info">
-                            <span className="role">Opponent</span>
-                            <div className="nametag-pill">
-                                <span className={`status-dot ${opponentConnected ? 'online' : 'offline'}`}></span>
-                                <span className="name">{opponentName || 'Waiting...'}</span>
+                {/* Collapsible Content */}
+                <div className="sidebar-collapsible">
+                    {/* Player Profiles */}
+                    <div className="profiles-section">
+                        <div className="profile-row opponent">
+                            <div className="profile-info">
+                                <span className="role">Opponent</span>
+                                <div className="nametag-pill">
+                                    <span className={`status-dot ${opponentConnected ? 'online' : 'offline'}`}></span>
+                                    <span className="name">{opponentName || 'Waiting...'}</span>
+                                </div>
                             </div>
+                            <span className={`color-indicator ${playerColor === 'white' ? 'black' : 'white'}`} title="Opponent Color" />
                         </div>
-                        <span className={`color-indicator ${playerColor === 'white' ? 'black' : 'white'}`} title="Opponent Color" />
+
+                        <div className="profile-divider"></div>
+
+                        <div className="profile-row player">
+                            <div className="profile-info">
+                                <span className="role">You</span>
+                                <div className="nametag-pill">
+                                    <span className="status-dot online"></span>
+                                    <span className="name">Me</span>
+                                </div>
+                            </div>
+                            <span className={`color-indicator ${playerColor || 'white'}`} title="Your Color" />
+                        </div>
                     </div>
 
-                    <div className="profile-divider"></div>
-
-                    <div className="profile-row player">
-                        <div className="profile-info">
-                            <span className="role">You</span>
-                            <div className="nametag-pill">
-                                <span className="status-dot online"></span>
-                                <span className="name">Me</span>
-                            </div>
-                        </div>
-                        <span className={`color-indicator ${playerColor || 'white'}`} title="Your Color" />
+                    {/* Tabs Navigation */}
+                    <div className="sidebar-tabs">
+                        <button
+                            className={`tab-btn ${activeTab === 'moves' ? 'active' : ''}`}
+                            onClick={() => setActiveTab('moves')}
+                        >
+                            Moves & Controls
+                        </button>
+                        <button
+                            className={`tab-btn ${activeTab === 'chat' ? 'active' : ''}`}
+                            onClick={() => setActiveTab('chat')}
+                        >
+                            Chat
+                        </button>
                     </div>
-                </div>
 
-                {/* Tabs Navigation */}
-                <div className="sidebar-tabs">
-                    <button
-                        className={`tab-btn ${activeTab === 'moves' ? 'active' : ''}`}
-                        onClick={() => setActiveTab('moves')}
-                    >
-                        Moves & Controls
-                    </button>
-                    <button
-                        className={`tab-btn ${activeTab === 'chat' ? 'active' : ''}`}
-                        onClick={() => setActiveTab('chat')}
-                    >
-                        Chat
-                    </button>
-                </div>
-
-                {/* Tab Content Area */}
-                <div className="sidebar-content">
-                    {activeTab === 'chat' ? (
-                        <div className="tab-pane chat-pane">
-                            <ChatPanel
-                                messages={chat}
-                                onSend={sendChat}
-                                playerColor={playerColor}
-                            />
-                        </div>
-                    ) : (
-                        <div className="tab-pane moves-controls-pane">
-                            <div className="moves-scroll-area">
-                                <MoveList moves={gameState.moves} />
-                            </div>
-                            <div className="controls-area">
-                                <GameControls
-                                    onResign={resign}
-                                    onOfferDraw={offerDraw}
-                                    onRequestRestart={requestRestart}
-                                    onRequestColorSwap={() => requestColorSwap(playerColor === 'white' ? 'black' : 'white')}
-                                    isGameEnded={gameState.isEnded}
-                                    isGameStarted={gameState.isStarted}
-                                    hasOpponent={!!opponentName}
-                                    movesCount={gameState.moves.length}
+                    {/* Tab Content Area */}
+                    <div className="sidebar-content">
+                        {activeTab === 'chat' ? (
+                            <div className="tab-pane chat-pane">
+                                <ChatPanel
+                                    messages={chat}
+                                    onSend={sendChat}
+                                    playerColor={playerColor}
                                 />
                             </div>
-                        </div>
-                    )}
+                        ) : (
+                            <div className="tab-pane moves-controls-pane">
+                                <div className="moves-scroll-area">
+                                    <MoveList moves={gameState.moves} />
+                                </div>
+                                <div className="controls-area">
+                                    <GameControls
+                                        onResign={resign}
+                                        onOfferDraw={offerDraw}
+                                        onRequestRestart={requestRestart}
+                                        onRequestColorSwap={() => requestColorSwap(playerColor === 'white' ? 'black' : 'white')}
+                                        isGameEnded={gameState.isEnded}
+                                        isGameStarted={gameState.isStarted}
+                                        hasOpponent={!!opponentName}
+                                        movesCount={gameState.moves.length}
+                                    />
+                                </div>
+                            </div>
+                        )}
+                    </div>
                 </div>
             </aside>
 
@@ -412,80 +423,88 @@ export default function RoomPage() {
                         Your side
                     </div>
                 </div>
-            </main>
+            </main >
             {/* Modals & Overlays */}
-            {showShareModal && (
-                <div className="modal-overlay" onClick={() => setShowShareModal(false)}>
-                    <div className="modal share-modal" onClick={e => e.stopPropagation()}>
-                        <div className="modal-header">
-                            <h2 className="modal-title">Invite a Friend</h2>
-                            <button className="modal-close" onClick={() => setShowShareModal(false)}>
-                                <span>&times;</span>
-                            </button>
-                        </div>
-                        <div className="modal-body">
-                            <p className="share-info">Share this code with your friend to start playing:</p>
-
-                            <div className="share-code-box glass">
-                                <span className="share-code">{roomCode}</span>
-                                <button className="btn btn-secondary btn-sm" onClick={handleCopyCode}>
-                                    {copied ? <Check size={16} /> : <Copy size={16} />}
-                                    {copied ? 'Copied!' : 'Copy'}
+            {
+                showShareModal && (
+                    <div className="modal-overlay" onClick={() => setShowShareModal(false)}>
+                        <div className="modal share-modal" onClick={e => e.stopPropagation()}>
+                            <div className="modal-header">
+                                <h2 className="modal-title">Invite a Friend</h2>
+                                <button className="modal-close" onClick={() => setShowShareModal(false)}>
+                                    <span>&times;</span>
                                 </button>
                             </div>
+                            <div className="modal-body">
+                                <p className="share-info">Share this code with your friend to start playing:</p>
 
-                            <div className="share-divider">
-                                <span>or</span>
+                                <div className="share-code-box glass">
+                                    <span className="share-code">{roomCode}</span>
+                                    <button className="btn btn-secondary btn-sm" onClick={handleCopyCode}>
+                                        {copied ? <Check size={16} /> : <Copy size={16} />}
+                                        {copied ? 'Copied!' : 'Copy'}
+                                    </button>
+                                </div>
+
+                                <div className="share-divider">
+                                    <span>or</span>
+                                </div>
+
+                                <button className="btn btn-primary btn-lg" onClick={handleCopyLink} style={{ width: '100%' }}>
+                                    <Link2 size={18} />
+                                    {copied ? 'Link Copied!' : 'Copy Invite Link'}
+                                </button>
+
+                                <p className="share-hint">
+                                    <Loader2 size={14} className="spinner" />
+                                    Waiting for opponent to join...
+                                </p>
                             </div>
-
-                            <button className="btn btn-primary btn-lg" onClick={handleCopyLink} style={{ width: '100%' }}>
-                                <Link2 size={18} />
-                                {copied ? 'Link Copied!' : 'Copy Invite Link'}
-                            </button>
-
-                            <p className="share-hint">
-                                <Loader2 size={14} className="spinner" />
-                                Waiting for opponent to join...
-                            </p>
                         </div>
                     </div>
-                </div>
-            )}
+                )
+            }
 
-            {confirmDialogProps && (
-                <ConfirmDialog {...confirmDialogProps} />
-            )}
+            {
+                confirmDialogProps && (
+                    <ConfirmDialog {...confirmDialogProps} />
+                )
+            }
 
-            {gameState.isEnded && (
-                <GameOverModal
-                    result={gameState.result}
-                    playerColor={playerColor}
-                    pgn={gameState.pgn}
-                    onRematch={() => {
-                        setRematchRequested(true);
-                        requestRestart();
-                    }}
-                    onLeave={handleLeaveRoom}
-                    pendingRematch={pendingRequest?.type === 'restart' ? pendingRequest : null}
-                    onAcceptRematch={approveRestart}
-                    onDeclineRematch={() => {
-                        declineRestart();
-                        setRematchRequested(false);
-                    }}
-                    rematchRequested={rematchRequested}
-                />
-            )}
+            {
+                gameState.isEnded && (
+                    <GameOverModal
+                        result={gameState.result}
+                        playerColor={playerColor}
+                        pgn={gameState.pgn}
+                        onRematch={() => {
+                            setRematchRequested(true);
+                            requestRestart();
+                        }}
+                        onLeave={handleLeaveRoom}
+                        pendingRematch={pendingRequest?.type === 'restart' ? pendingRequest : null}
+                        onAcceptRematch={approveRestart}
+                        onDeclineRematch={() => {
+                            declineRestart();
+                            setRematchRequested(false);
+                        }}
+                        rematchRequested={rematchRequested}
+                    />
+                )
+            }
 
-            {showLeaveConfirm && (
-                <ConfirmDialog
-                    title="Leave Game?"
-                    message="The game is still in progress. Are you sure you want to leave?"
-                    onConfirm={confirmLeave}
-                    onCancel={() => setShowLeaveConfirm(false)}
-                    confirmText="Leave"
-                    cancelText="Stay"
-                />
-            )}
-        </div>
+            {
+                showLeaveConfirm && (
+                    <ConfirmDialog
+                        title="Leave Game?"
+                        message="The game is still in progress. Are you sure you want to leave?"
+                        onConfirm={confirmLeave}
+                        onCancel={() => setShowLeaveConfirm(false)}
+                        confirmText="Leave"
+                        cancelText="Stay"
+                    />
+                )
+            }
+        </div >
     );
 }
