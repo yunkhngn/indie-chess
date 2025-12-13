@@ -1,5 +1,6 @@
-import { useState } from 'react';
-import { Copy, Download, RotateCcw, LogOut, Check, Crown, Minus, Loader2 } from 'lucide-react';
+import { useState, useEffect } from 'react';
+import { Copy, Download, RotateCcw, LogOut, Check, Crown, Minus, Loader2, X } from 'lucide-react';
+import confetti from 'canvas-confetti';
 import './GameOverModal.css';
 
 export default function GameOverModal({
@@ -8,6 +9,7 @@ export default function GameOverModal({
     pgn,
     onRematch,
     onLeave,
+    onClose,
     pendingRematch,
     onAcceptRematch,
     onDeclineRematch,
@@ -17,6 +19,24 @@ export default function GameOverModal({
 
     const isWinner = result?.winner === playerColor;
     const isDraw = result?.winner === null;
+
+    // Confetti effect when player wins
+    useEffect(() => {
+        if (isWinner) {
+            // Fire confetti from left
+            confetti({
+                particleCount: 100,
+                spread: 70,
+                origin: { x: 0.1, y: 0.6 }
+            });
+            // Fire confetti from right
+            confetti({
+                particleCount: 100,
+                spread: 70,
+                origin: { x: 0.9, y: 0.6 }
+            });
+        }
+    }, [isWinner]);
 
     const getResultText = () => {
         if (isDraw) return 'Draw';
@@ -65,8 +85,13 @@ export default function GameOverModal({
     };
 
     return (
-        <div className="modal-overlay">
-            <div className="modal game-over-modal">
+        <div className="modal-overlay" onClick={onClose}>
+            <div className="modal game-over-modal" onClick={e => e.stopPropagation()}>
+                {onClose && (
+                    <button className="modal-close-btn" onClick={onClose} title="Close to review game">
+                        <X size={18} />
+                    </button>
+                )}
                 <div className={`result-header ${isDraw ? 'draw' : isWinner ? 'win' : 'lose'}`}>
                     <div className="result-icon-wrapper">
                         {isDraw ? <Minus size={24} /> : <Crown size={24} />}

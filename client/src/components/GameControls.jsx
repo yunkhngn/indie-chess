@@ -67,15 +67,17 @@ export default function GameControls({
                     </button>
                 )}
 
-                <button
-                    className="control-btn"
-                    onClick={onRequestColorSwap}
-                    disabled={!canSwapColors}
-                    title={!canSwapColors ? 'Cannot swap colors after game starts' : 'Request to swap colors'}
-                >
-                    <ArrowLeftRight size={20} />
-                    <span>Swap Colors</span>
-                </button>
+                {!isGameEnded && (
+                    <button
+                        className="control-btn"
+                        onClick={onRequestColorSwap}
+                        disabled={!canSwapColors}
+                        title={!canSwapColors ? 'Cannot swap colors after game starts' : 'Request to swap colors'}
+                    >
+                        <ArrowLeftRight size={20} />
+                        <span>Swap Colors</span>
+                    </button>
+                )}
             </div>
         </div>
     );

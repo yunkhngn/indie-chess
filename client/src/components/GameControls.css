@@ -13,6 +13,16 @@
     gap: var(--spacing-sm);
 }
 
+/* When only one button (game ended), make it full width and row layout */
+.controls-grid:has(.control-btn:only-child) {
+    grid-template-columns: 1fr;
+}
+
+.controls-grid:has(.control-btn:only-child) .control-btn {
+    flex-direction: row;
+    padding: var(--spacing-sm);
+}
+
 .control-btn {
     display: flex;
     flex-direction: column;
@@ -45,7 +55,6 @@
     background: var(--color-text-primary);
     border-color: transparent;
     color: var(--color-bg-primary);
-    grid-column: span 2;
 }
 
 .control-btn.primary:hover:not(:disabled) {

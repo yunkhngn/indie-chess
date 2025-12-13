@@ -333,6 +333,42 @@
     font-size: 0.9rem;
 }
 
+/* Floating Game Ended Bar */
+.game-ended-bar {
+    position: absolute;
+    bottom: var(--spacing-lg);
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--spacing-md);
+    background: var(--glass-bg);
+    backdrop-filter: var(--glass-blur);
+    border: 1px solid var(--glass-border);
+    border-radius: var(--radius-lg);
+    padding: var(--spacing-sm) var(--spacing-md);
+    width: 90%;
+    max-width: 500px;
+    z-index: 20;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+}
+
+.board-centering-container {
+    position: relative;
+}
+
+.game-ended-text {
+    font-weight: 600;
+    color: var(--color-text-primary);
+    font-size: 0.9rem;
+}
+
+.game-ended-actions {
+    display: flex;
+    gap: var(--spacing-sm);
+}
+
 /* Responsive Breakpoints */
 @media (max-width: 1024px) {
     .dashboard-layout {

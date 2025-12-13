@@ -36,6 +36,7 @@ export default function RoomPage() {
     const [activeTab, setActiveTab] = useState('moves'); // Default to moves or chat
     const [rematchRequested, setRematchRequested] = useState(false);
     const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
+    const [showGameOverModal, setShowGameOverModal] = useState(true);
     const [theme, setTheme] = useState(() => {
         if (typeof window !== 'undefined') {
             return localStorage.getItem('theme') || 'dark';
@@ -441,8 +442,40 @@ export default function RoomPage() {
                     <div className="mobile-player-bar bottom mobile-only">
                         Your side
                     </div>
+
+                    {/* Floating Game Ended Bar when modal is closed */}
+                    {gameState.isEnded && !showGameOverModal && (
+                        <div className="game-ended-bar">
+                            <span className="game-ended-text">
+                                Game ended: {gameState.result?.winner === playerColor ? 'Victory' : gameState.result?.winner === null ? 'Draw' : 'Defeat'}
+                            </span>
+                            <div className="game-ended-actions">
+                                <button
+                                    className="btn btn-secondary btn-sm"
+                                    onClick={() => setShowGameOverModal(true)}
+                                >
+                                    View Result
+                                </button>
+                                {!rematchRequested ? (
+                                    <button
+                                        className="btn btn-primary btn-sm"
+                                        onClick={() => {
+                                            setRematchRequested(true);
+                                            requestRestart();
+                                        }}
+                                    >
+                                        Rematch
+                                    </button>
+                                ) : (
+                                    <button className="btn btn-primary btn-sm" disabled>
+                                        Waiting...
+                                    </button>
+                                )}
+                            </div>
+                        </div>
+                    )}
                 </div>
-            </main >
+            </main>
             {/* Modals & Overlays */}
             {
                 showShareModal && (
@@ -490,27 +523,26 @@ export default function RoomPage() {
                 )
             }
 
-            {
-                gameState.isEnded && (
-                    <GameOverModal
-                        result={gameState.result}
-                        playerColor={playerColor}
-                        pgn={gameState.pgn}
-                        onRematch={() => {
-                            setRematchRequested(true);
-                            requestRestart();
-                        }}
-                        onLeave={handleLeaveRoom}
-                        pendingRematch={pendingRequest?.type === 'restart' ? pendingRequest : null}
-                        onAcceptRematch={approveRestart}
-                        onDeclineRematch={() => {
-                            declineRestart();
-                            setRematchRequested(false);
-                        }}
-                        rematchRequested={rematchRequested}
-                    />
-                )
-            }
+            {gameState.isEnded && showGameOverModal && (
+                <GameOverModal
+                    result={gameState.result}
+                    playerColor={playerColor}
+                    pgn={gameState.pgn}
+                    onRematch={() => {
+                        setRematchRequested(true);
+                        requestRestart();
+                    }}
+                    onLeave={handleLeaveRoom}
+                    onClose={() => setShowGameOverModal(false)}
+                    pendingRematch={pendingRequest?.type === 'restart' ? pendingRequest : null}
+                    onAcceptRematch={approveRestart}
+                    onDeclineRematch={() => {
+                        declineRestart();
+                        setRematchRequested(false);
+                    }}
+                    rematchRequested={rematchRequested}
+                />
+            )}
 
             {
                 showLeaveConfirm && (

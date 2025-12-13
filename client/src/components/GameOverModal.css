@@ -1,5 +1,29 @@
 .game-over-modal {
     max-width: 380px;
+    position: relative;
+}
+
+.modal-close-btn {
+    position: absolute;
+    top: var(--spacing-sm);
+    right: var(--spacing-sm);
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    border: none;
+    background: var(--color-bg-tertiary);
+    color: var(--color-text-secondary);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+    z-index: 10;
+}
+
+.modal-close-btn:hover {
+    background: var(--color-bg-primary);
+    color: var(--color-text-primary);
 }
 
 .result-header {
