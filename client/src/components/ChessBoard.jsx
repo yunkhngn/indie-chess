@@ -14,7 +14,8 @@ export default function ChessBoard({
     isGameEnded,
     lastMove,
     isCheck,
-    opponentConnected = true
+    opponentConnected = true,
+    suggestedMove // 'e2e4'
 }) {
     const [moveFrom, setMoveFrom] = useState(null);
     const [optionSquares, setOptionSquares] = useState({});
@@ -27,6 +28,14 @@ export default function ChessBoard({
         chess.load(fen);
         return chess;
     }, [fen]);
+
+    // Calculate arrows for suggested move
+    const customArrows = useMemo(() => {
+        if (!suggestedMove || suggestedMove.length < 4 || suggestedMove === '(none)') return [];
+        const from = suggestedMove.substring(0, 2);
+        const to = suggestedMove.substring(2, 4);
+        return [[from, to, 'rgba(255, 170, 0, 0.8)']]; // Orange arrow
+    }, [suggestedMove]);
 
     // Play sound when a move is made (fen changes)
     useEffect(() => {
@@ -182,13 +191,16 @@ export default function ChessBoard({
     return (
         <div className={`chess-board-wrapper ${!isMyTurn && isGameStarted ? 'not-my-turn' : ''}`}>
             <Chessboard
+                id="BasicBoard"
                 position={fen}
                 onSquareClick={onSquareClick}
                 onPieceDragBegin={onPieceDragBegin}
                 onPieceDrop={onPieceDrop}
                 onSquareRightClick={onSquareRightClick}
-                boardOrientation={playerColor || 'white'}
+                boardOrientation={playerColor}
                 customSquareStyles={customSquareStyles}
+                customArrows={customArrows}
+                areArrowsAllowed={true}
                 customBoardStyle={{
                     borderRadius: '12px',
                     boxShadow: '0 8px 32px rgba(0, 0, 0, 0.1)'

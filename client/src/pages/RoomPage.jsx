@@ -19,6 +19,7 @@ import ChatPanel from '../components/ChatPanel';
 import GameControls from '../components/GameControls';
 import ConfirmDialog from '../components/ConfirmDialog';
 import GameOverModal from '../components/GameOverModal';
+import { useStockfish } from '../hooks/useStockfish';
 import './RoomPage.css';
 
 export default function RoomPage() {
@@ -43,6 +44,9 @@ export default function RoomPage() {
         }
         return 'dark';
     });
+
+    // Stockfish Engine
+
 
     const {
         connected,
@@ -70,6 +74,28 @@ export default function RoomPage() {
         leaveRoom,
         setCallbacks
     } = useChessSocket();
+
+    // Stockfish Engine
+    const { findBestMove, bestMove, isThinking } = useStockfish();
+    const [suggestedMove, setSuggestedMove] = useState(null);
+
+    // Update suggested move when engine finds it
+    useEffect(() => {
+        if (bestMove) {
+            setSuggestedMove(bestMove);
+        }
+    }, [bestMove]);
+
+    // Clear suggestion when board updates (move made)
+    useEffect(() => {
+        setSuggestedMove(null);
+    }, [gameState?.fen]);
+
+    const handleSuggestMove = () => {
+        if (gameState?.turn === playerColor && !gameState?.isEnded) {
+            findBestMove(gameState.fen);
+        }
+    };
 
     // Check if we need to show join form (wait for potential reconnection first)
     useEffect(() => {
@@ -405,6 +431,8 @@ export default function RoomPage() {
                                         onOfferDraw={offerDraw}
                                         onRequestRestart={requestRestart}
                                         onRequestColorSwap={() => requestColorSwap(playerColor === 'white' ? 'black' : 'white')}
+                                        onSuggestMove={handleSuggestMove}
+                                        isSuggesting={isThinking}
                                         isGameEnded={gameState.isEnded}
                                         isGameStarted={gameState.isStarted}
                                         hasOpponent={!!opponentName}
@@ -436,6 +464,7 @@ export default function RoomPage() {
                         lastMove={gameState.moves[gameState.moves.length - 1]}
                         isCheck={gameState.isCheck}
                         opponentConnected={opponentConnected}
+                        suggestedMove={suggestedMove}
                     />
 
                     {/* Mobile Player Bar (Self) */}

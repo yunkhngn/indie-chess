@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Flag, Handshake, RotateCcw, ArrowLeftRight } from 'lucide-react';
+import { Flag, Handshake, RotateCcw, ArrowLeftRight, Lightbulb, Loader2 } from 'lucide-react';
 import './GameControls.css';
 
 export default function GameControls({
@@ -7,6 +7,8 @@ export default function GameControls({
     onOfferDraw,
     onRequestRestart,
     onRequestColorSwap,
+    onSuggestMove,
+    isSuggesting,
     isGameEnded,
     isGameStarted,
     hasOpponent,
@@ -52,6 +54,19 @@ export default function GameControls({
                         >
                             <Handshake size={20} />
                             <span>Offer Draw</span>
+                        </button>
+
+                        <button
+                            className="control-btn"
+                            onClick={onSuggestMove}
+                            disabled={isSuggesting}
+                        >
+                            {isSuggesting ? (
+                                <Loader2 size={20} className="spinner" />
+                            ) : (
+                                <Lightbulb size={20} />
+                            )}
+                            <span>Suggest</span>
                         </button>
                     </>
                 )}
