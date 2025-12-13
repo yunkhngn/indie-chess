@@ -1,5 +1,6 @@
 import { roomManager } from './roomManager.js';
 import { gameManager } from './gameManager.js';
+import { config } from './config.js';
 
 export function setupSocketHandlers(io) {
   io.on('connection', (socket) => {
@@ -413,6 +414,14 @@ export function setupSocketHandlers(io) {
         });
 
         console.log(`Player ${playerName} disconnected from room ${roomCode}`);
+
+        // Schedule room cleanup after reconnect window expires
+        setTimeout(() => {
+          if (roomManager.isRoomEmpty(roomCode)) {
+            gameManager.deleteGame(roomCode);
+            roomManager.deleteRoom(roomCode);
+          }
+        }, config.reconnectWindow + 5000); // Add 5s buffer after reconnect window
       }
     });
   });

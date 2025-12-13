@@ -72,7 +72,20 @@ export default function RoomPage() {
 
     // Check if we need to show join form (wait for potential reconnection first)
     useEffect(() => {
-        if (connected && roomCode && !playerColor && !connectedRoom) {
+        // Don't show join form if we already have a playerColor (we're in the room)
+        if (playerColor) {
+            setShowJoinForm(false);
+            return;
+        }
+
+        // Don't show if we're connected to this room
+        if (connectedRoom === roomCode) {
+            setShowJoinForm(false);
+            return;
+        }
+
+        // Only check if socket is connected and we have a room code from URL
+        if (connected && roomCode && !playerColor) {
             // Check if we have stored session - if so, wait for reconnection attempt
             const storedRoom = sessionStorage.getItem('chess_room');
             const storedPlayer = sessionStorage.getItem('chess_player');
@@ -81,14 +94,20 @@ export default function RoomPage() {
                 // We have matching session, wait a bit for reconnection
                 const timer = setTimeout(() => {
                     // If still not connected after delay, show join form
-                    if (!playerColor) {
+                    if (!playerColor && connectedRoom !== roomCode) {
                         setShowJoinForm(true);
                     }
-                }, 1500); // Wait 1.5s for reconnection attempt
+                }, 2000); // Wait 2s for reconnection attempt
                 return () => clearTimeout(timer);
             } else {
-                // No matching session, show join form immediately
-                setShowJoinForm(true);
+                // No matching session, show join form after a short delay
+                // to allow for any pending room creation to complete
+                const timer = setTimeout(() => {
+                    if (!playerColor && connectedRoom !== roomCode) {
+                        setShowJoinForm(true);
+                    }
+                }, 500);
+                return () => clearTimeout(timer);
             }
         }
     }, [connected, roomCode, playerColor, connectedRoom]);

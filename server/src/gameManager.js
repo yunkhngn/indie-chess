@@ -38,6 +38,18 @@ class GameManager {
     return this.games.get(roomCode);
   }
 
+  deleteGame(roomCode) {
+    const game = this.games.get(roomCode);
+    if (game) {
+      // Stop the clock if running
+      if (game.clockInterval) {
+        clearInterval(game.clockInterval);
+      }
+      this.games.delete(roomCode);
+      console.log(`Game ${roomCode} deleted`);
+    }
+  }
+
   setPlayerNames(roomCode, whiteName, blackName) {
     const game = this.games.get(roomCode);
     if (!game) return;

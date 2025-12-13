@@ -204,6 +204,36 @@ class RoomManager {
     return this.rooms.get(roomCode);
   }
 
+  isRoomEmpty(roomCode) {
+    const room = this.rooms.get(roomCode);
+    if (!room) return true;
+    
+    // Room is empty if no players are connected
+    const whiteConnected = room.players.white?.connected || false;
+    const blackConnected = room.players.black?.connected || false;
+    
+    return !whiteConnected && !blackConnected;
+  }
+
+  deleteRoom(roomCode) {
+    const room = this.rooms.get(roomCode);
+    if (!room) return;
+
+    // Remove player mappings
+    if (room.players.white?.id) {
+      this.playerRooms.delete(room.players.white.id);
+      this.disconnectedPlayers.delete(room.players.white.id);
+    }
+    if (room.players.black?.id) {
+      this.playerRooms.delete(room.players.black.id);
+      this.disconnectedPlayers.delete(room.players.black.id);
+    }
+
+    // Remove room
+    this.rooms.delete(roomCode);
+    console.log(`Room ${roomCode} deleted (empty/expired)`);
+  }
+
   getRoomByPlayerId(playerId) {
     const roomCode = this.playerRooms.get(playerId);
     if (!roomCode) return null;
