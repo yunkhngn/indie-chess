@@ -32,6 +32,7 @@ export default function RoomPage() {
     const [copied, setCopied] = useState(false);
     // Tab state for Dashboard Layout
     const [activeTab, setActiveTab] = useState('moves'); // Default to moves or chat
+    const [rematchRequested, setRematchRequested] = useState(false);
     const [theme, setTheme] = useState(() => {
         if (typeof window !== 'undefined') {
             return localStorage.getItem('theme') || 'dark';
@@ -117,6 +118,13 @@ export default function RoomPage() {
             setShowShareModal(false);
         }
     }, [opponentName]);
+
+    // Reset rematch state when game restarts
+    useEffect(() => {
+        if (!gameState.isEnded) {
+            setRematchRequested(false);
+        }
+    }, [gameState.isEnded]);
 
     const handleLeaveRoom = () => {
         // If game is in progress, show confirmation
@@ -436,8 +444,18 @@ export default function RoomPage() {
                     result={gameState.result}
                     playerColor={playerColor}
                     pgn={gameState.pgn}
-                    onRematch={requestRestart}
+                    onRematch={() => {
+                        setRematchRequested(true);
+                        requestRestart();
+                    }}
                     onLeave={handleLeaveRoom}
+                    pendingRematch={pendingRequest?.type === 'restart' ? pendingRequest : null}
+                    onAcceptRematch={approveRestart}
+                    onDeclineRematch={() => {
+                        declineRestart();
+                        setRematchRequested(false);
+                    }}
+                    rematchRequested={rematchRequested}
                 />
             )}
 

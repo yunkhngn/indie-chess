@@ -1,8 +1,18 @@
 import { useState } from 'react';
-import { Copy, Download, RotateCcw, LogOut, Check, Crown, Minus } from 'lucide-react';
+import { Copy, Download, RotateCcw, LogOut, Check, Crown, Minus, Loader2 } from 'lucide-react';
 import './GameOverModal.css';
 
-export default function GameOverModal({ result, playerColor, pgn, onRematch, onLeave }) {
+export default function GameOverModal({
+    result,
+    playerColor,
+    pgn,
+    onRematch,
+    onLeave,
+    pendingRematch,
+    onAcceptRematch,
+    onDeclineRematch,
+    rematchRequested
+}) {
     const [copied, setCopied] = useState(false);
 
     const isWinner = result?.winner === playerColor;
@@ -84,16 +94,44 @@ export default function GameOverModal({ result, playerColor, pgn, onRematch, onL
                     </div>
                 )}
 
-                <div className="game-over-actions">
-                    <button className="btn btn-secondary" onClick={onLeave}>
-                        <LogOut size={16} />
-                        Leave
-                    </button>
-                    <button className="btn btn-primary" onClick={onRematch}>
-                        <RotateCcw size={16} />
-                        Rematch
-                    </button>
-                </div>
+                {pendingRematch ? (
+                    <div className="rematch-request-section">
+                        <p className="rematch-request-text">
+                            <strong>{pendingRematch.from}</strong> wants a rematch!
+                        </p>
+                        <div className="game-over-actions">
+                            <button className="btn btn-secondary" onClick={onDeclineRematch}>
+                                Decline
+                            </button>
+                            <button className="btn btn-primary" onClick={onAcceptRematch}>
+                                <Check size={16} />
+                                Accept
+                            </button>
+                        </div>
+                    </div>
+                ) : rematchRequested ? (
+                    <div className="game-over-actions">
+                        <button className="btn btn-secondary" onClick={onLeave}>
+                            <LogOut size={16} />
+                            Leave
+                        </button>
+                        <button className="btn btn-primary" disabled>
+                            <Loader2 size={16} className="spinner" />
+                            Waiting...
+                        </button>
+                    </div>
+                ) : (
+                    <div className="game-over-actions">
+                        <button className="btn btn-secondary" onClick={onLeave}>
+                            <LogOut size={16} />
+                            Leave
+                        </button>
+                        <button className="btn btn-primary" onClick={onRematch}>
+                            <RotateCcw size={16} />
+                            Rematch
+                        </button>
+                    </div>
+                )}
             </div>
         </div>
     );

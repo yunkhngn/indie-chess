@@ -147,6 +147,7 @@
     height: 1px;
     background: var(--color-border);
     opacity: 0.5;
+    margin: var(--spacing-md) 0;
 }
 
 /* Tab Navigation */

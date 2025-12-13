@@ -120,3 +120,21 @@
 .game-over-actions .btn {
     flex: 1;
 }
+
+.rematch-request-section {
+    background: linear-gradient(135deg, rgba(59, 130, 246, 0.1) 0%, rgba(147, 51, 234, 0.1) 100%);
+    border: 1px solid rgba(59, 130, 246, 0.3);
+    border-radius: var(--radius-lg);
+    padding: var(--spacing-md);
+    text-align: center;
+}
+
+.rematch-request-text {
+    margin-bottom: var(--spacing-md);
+    color: var(--color-text-primary);
+    font-size: 0.9375rem;
+}
+
+.rematch-request-text strong {
+    color: var(--color-primary);
+}
