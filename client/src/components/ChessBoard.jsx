@@ -1,7 +1,8 @@
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect, useRef } from 'react';
 import { Chessboard } from 'react-chessboard';
 import { Chess } from 'chess.js';
 import { Loader2, Pause } from 'lucide-react';
+import { useChessSound } from '../hooks/useChessSound';
 import './ChessBoard.css';
 
 export default function ChessBoard({
@@ -18,12 +19,32 @@ export default function ChessBoard({
     const [moveFrom, setMoveFrom] = useState(null);
     const [optionSquares, setOptionSquares] = useState({});
     const [rightClickedSquares, setRightClickedSquares] = useState({});
+    const { playSound } = useChessSound();
+    const prevFenRef = useRef(fen);
 
     const game = useMemo(() => {
         const chess = new Chess();
         chess.load(fen);
         return chess;
     }, [fen]);
+
+    // Play sound when a move is made (fen changes)
+    useEffect(() => {
+        if (prevFenRef.current !== fen && isGameStarted) {
+            // Check if it's a capture by comparing piece counts
+            const prevGame = new Chess();
+            prevGame.load(prevFenRef.current);
+            const prevPieceCount = prevGame.board().flat().filter(p => p).length;
+
+            const currGame = new Chess();
+            currGame.load(fen);
+            const currPieceCount = currGame.board().flat().filter(p => p).length;
+
+            const isCapture = currPieceCount < prevPieceCount;
+            playSound(isCapture ? 'capture' : 'move');
+        }
+        prevFenRef.current = fen;
+    }, [fen, isGameStarted, playSound]);
 
     const getMoveOptions = (square) => {
         const moves = game.moves({ square, verbose: true });
