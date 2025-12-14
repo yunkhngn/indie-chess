@@ -9,6 +9,8 @@ export default function GameControls({
     onRequestColorSwap,
     onSuggestMove,
     isSuggesting,
+    suggestRemaining = 3,
+    suggestCooldownRemaining = 0,
     isGameEnded,
     isGameStarted,
     hasOpponent,
@@ -28,6 +30,16 @@ export default function GameControls({
 
     // Can swap colors only if no moves have been made yet
     const canSwapColors = hasOpponent && (movesCount === 0 || isGameEnded);
+
+    // Suggest button state
+    const isSuggestDisabled = isSuggesting || suggestRemaining <= 0 || suggestCooldownRemaining > 0;
+
+    const getSuggestLabel = () => {
+        if (suggestCooldownRemaining > 0) {
+            return `${suggestCooldownRemaining}s`;
+        }
+        return `Suggest (${suggestRemaining})`;
+    };
 
     return (
         <div className="game-controls card">
@@ -57,16 +69,17 @@ export default function GameControls({
                         </button>
 
                         <button
-                            className="control-btn"
+                            className={`control-btn ${suggestRemaining <= 0 ? 'disabled-permanent' : ''}`}
                             onClick={onSuggestMove}
-                            disabled={isSuggesting}
+                            disabled={isSuggestDisabled}
+                            title={suggestRemaining <= 0 ? 'No suggestions remaining' : suggestCooldownRemaining > 0 ? `Wait ${suggestCooldownRemaining}s` : `${suggestRemaining} suggestions remaining`}
                         >
                             {isSuggesting ? (
                                 <Loader2 size={20} className="spinner" />
                             ) : (
                                 <Lightbulb size={20} />
                             )}
-                            <span>Suggest</span>
+                            <span>{getSuggestLabel()}</span>
                         </button>
                     </>
                 )}

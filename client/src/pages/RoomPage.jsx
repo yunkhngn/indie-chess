@@ -19,6 +19,7 @@ import ChatPanel from '../components/ChatPanel';
 import GameControls from '../components/GameControls';
 import ConfirmDialog from '../components/ConfirmDialog';
 import GameOverModal from '../components/GameOverModal';
+import MathChallengeModal from '../components/MathChallengeModal';
 import { useStockfish } from '../hooks/useStockfish';
 import './RoomPage.css';
 
@@ -79,6 +80,12 @@ export default function RoomPage() {
     const { findBestMove, bestMove, isThinking } = useStockfish();
     const [suggestedMove, setSuggestedMove] = useState(null);
 
+    // Suggest limits & cooldown
+    const [suggestCount, setSuggestCount] = useState(0);
+    const [suggestCooldownEnd, setSuggestCooldownEnd] = useState(0);
+    const [showMathChallenge, setShowMathChallenge] = useState(false);
+    const [cooldownRemaining, setCooldownRemaining] = useState(0);
+
     // Update suggested move when engine finds it
     useEffect(() => {
         if (bestMove) {
@@ -91,10 +98,49 @@ export default function RoomPage() {
         setSuggestedMove(null);
     }, [gameState?.fen]);
 
-    const handleSuggestMove = () => {
-        if (gameState?.turn === playerColor && !gameState?.isEnded) {
-            findBestMove(gameState.fen);
+    // Reset suggest count when game restarts
+    useEffect(() => {
+        if (!gameState?.isEnded && gameState?.moves?.length === 0) {
+            setSuggestCount(0);
         }
+    }, [gameState?.isEnded, gameState?.moves?.length]);
+
+    // Cooldown timer
+    useEffect(() => {
+        if (suggestCooldownEnd <= Date.now()) {
+            setCooldownRemaining(0);
+            return;
+        }
+
+        const interval = setInterval(() => {
+            const remaining = Math.max(0, Math.ceil((suggestCooldownEnd - Date.now()) / 1000));
+            setCooldownRemaining(remaining);
+            if (remaining <= 0) {
+                clearInterval(interval);
+            }
+        }, 1000);
+
+        return () => clearInterval(interval);
+    }, [suggestCooldownEnd]);
+
+    const handleSuggestMove = () => {
+        if (gameState?.turn !== playerColor || gameState?.isEnded) return;
+        if (suggestCount >= 3) return;
+        if (cooldownRemaining > 0) return;
+
+        // Show math challenge
+        setShowMathChallenge(true);
+    };
+
+    const handleMathSuccess = () => {
+        findBestMove(gameState.fen);
+        setSuggestCount(prev => prev + 1);
+        setSuggestCooldownEnd(Date.now() + 30000); // 30 seconds
+        setCooldownRemaining(30);
+    };
+
+    const handleMathFail = () => {
+        // No penalty - don't deduct suggest count
     };
 
     // Check if we need to show join form (wait for potential reconnection first)
@@ -433,6 +479,8 @@ export default function RoomPage() {
                                         onRequestColorSwap={() => requestColorSwap(playerColor === 'white' ? 'black' : 'white')}
                                         onSuggestMove={handleSuggestMove}
                                         isSuggesting={isThinking}
+                                        suggestRemaining={3 - suggestCount}
+                                        suggestCooldownRemaining={cooldownRemaining}
                                         isGameEnded={gameState.isEnded}
                                         isGameStarted={gameState.isStarted}
                                         hasOpponent={!!opponentName}
@@ -585,6 +633,14 @@ export default function RoomPage() {
                     />
                 )
             }
+
+            {showMathChallenge && (
+                <MathChallengeModal
+                    onSuccess={handleMathSuccess}
+                    onFail={handleMathFail}
+                    onClose={() => setShowMathChallenge(false)}
+                />
+            )}
         </div >
     );
 }
